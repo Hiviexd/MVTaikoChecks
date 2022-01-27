@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Mapset Verifier": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Mapset Verifier\\Mapset Verifier.exe",
+      "workingDirectory": "C:\\Program Files\\Mapset Verifier",
+      "nativeDebugging": true
+    }
+  }
+}
