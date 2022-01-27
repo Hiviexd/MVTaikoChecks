@@ -70,6 +70,7 @@ namespace MVTaikoChecks.Checks.Compose
         public override IEnumerable<Issue> GetIssues(Beatmap beatmap)
         {
             const double threshold = 50;
+            const double lower_threshold = 2;
 
             var redLines = beatmap.timingLines
                 .Where(x => x is UninheritedLine)
@@ -79,16 +80,21 @@ namespace MVTaikoChecks.Checks.Compose
             for (int i = 0; i < redLines.Count; i++)
             {
                 var current = redLines[i];
-                var next = i + 1 < redLines.Count ? redLines[i + 1] : null;
+                var next = redLines.SafeGetIndex(i + 1);
+
+                var barlineGap = current.msPerBeat * current.meter;
+                var distance = (next?.offset ?? double.MaxValue) - current.offset;
 
                 // if the next line has an omit, double barlines can't happen
-                if (next == null || next.omitsBarLine)
+                // if the current line has an omit and lasts only 1 measure, double barlines can't happen either
+                // true for not insanely high bpms, but who cares ^
+                if (next == null || next.omitsBarLine || (current.omitsBarLine && distance <= barlineGap))
                     continue;
 
-                double barlineGap = current.msPerBeat * current.meter;
-                double rest = (next.offset - current.offset) % barlineGap;
+                var rest = distance % barlineGap;
 
-                if (rest - threshold <= 0)
+                // rest >= lower_threshold is to avoid rounding errors and false positives on red lines placed at the same time as a big white tick
+                if (rest - threshold <= 0 && rest >= lower_threshold)
                 {
                     yield return new Issue(
                         GetTemplate(_PROBLEM),

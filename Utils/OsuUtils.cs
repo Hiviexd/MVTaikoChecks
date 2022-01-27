@@ -16,6 +16,10 @@ namespace MVTaikoChecks.Utils
             return new BeatmapSet(folderPath);
         }
 
+#if RELEASE
+#warning TODO: 100-280 BPM
+#endif
+
         public static double GetNormalizedMsPerBeat(this UninheritedLine line)
         {
             double result = line.msPerBeat;

@@ -70,15 +70,18 @@ namespace MVTaikoChecks.Checks.Compose
         {
             var hitObjects = beatmap.hitObjects;
 
-            // for each diff: double minimalGap = ?;
-            var minimalGap = new Dictionary<Beatmap.Difficulty, double>();
-            minimalGap.AddRange(_DIFFICULTIES.Take(3), FULL_BEAT_180 / 2);
-            minimalGap.AddRange(_DIFFICULTIES.Skip(3).Take(3), FULL_BEAT_180 / 4);
-
             for (int i = 0; i < hitObjects.Count; i++)
             {
                 var current = hitObjects[i];
-                var next = i + 1 < hitObjects.Count ? hitObjects[i + 1] : null;
+                var next = hitObjects.SafeGetIndex(i + 1);
+
+                var timing = beatmap.GetTimingLine<UninheritedLine>(current.time);
+                var normalizedMsPerBeat = timing.GetNormalizedMsPerBeat();
+
+                // for each diff: double minimalGap = ?;
+                var minimalGap = new Dictionary<Beatmap.Difficulty, double>();
+                minimalGap.AddRange(_DIFFICULTIES.Take(3), normalizedMsPerBeat / 2);
+                minimalGap.AddRange(_DIFFICULTIES.Skip(3).Take(3), normalizedMsPerBeat / 4);
 
                 if (!(next is Spinner))
                     continue;

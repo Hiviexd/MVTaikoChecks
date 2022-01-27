@@ -69,15 +69,6 @@ namespace MVTaikoChecks.Checks.Compose
         {
             var circles = beatmap.hitObjects.Where(x => x is Circle).ToList();
 
-            // for each diff: double minimalGap = ?;
-            var minimalGap = new Dictionary<Beatmap.Difficulty, double>()
-            {
-                { DIFF_KANTAN, FULL_BEAT_180 / 2 },
-                { DIFF_FUTSUU, FULL_BEAT_180 / 3 },
-                { DIFF_MUZU, FULL_BEAT_180 / 6 },
-                { DIFF_ONI, FULL_BEAT_180 / 8 }
-            };
-
             // for each diff: var violatingGroup = new List<HitObject>();
             // lambda is used, because bare "new List<HitObject>()" would set the same instance in each pair
             var violatingGroup = new Dictionary<Beatmap.Difficulty, List<HitObject>>();
@@ -86,7 +77,19 @@ namespace MVTaikoChecks.Checks.Compose
             for (int i = 0; i < circles.Count; i++)
             {
                 var current = circles[i];
-                var next = i + 1 < circles.Count ? circles[i + 1] : null;
+                var next = circles.SafeGetIndex(i + 1);
+
+                var timing = beatmap.GetTimingLine<UninheritedLine>(current.time);
+                var normalizedMsPerBeat = timing.GetNormalizedMsPerBeat();
+
+                // for each diff: double minimalGap = ?;
+                var minimalGap = new Dictionary<Beatmap.Difficulty, double>()
+                {
+                    { DIFF_KANTAN, normalizedMsPerBeat / 2 },
+                    { DIFF_FUTSUU, normalizedMsPerBeat / 3 },
+                    { DIFF_MUZU, normalizedMsPerBeat / 6 },
+                    { DIFF_ONI, normalizedMsPerBeat / 8 }
+                };
 
                 var gap = (next?.time ?? double.MaxValue) - current.time;
 

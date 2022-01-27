@@ -78,15 +78,6 @@ namespace MVTaikoChecks.Checks.Compose
         {
             var circles = beatmap.hitObjects.Where(x => x is Circle).ToList();
 
-            // for each diff: double minimalGap = ?;
-            var minimalGap = new Dictionary<Beatmap.Difficulty, double>()
-            {
-                { DIFF_KANTAN, 3 * FULL_BEAT_180 },
-                { DIFF_FUTSUU, 2 * FULL_BEAT_180 },
-                { DIFF_MUZU, 1.5 * FULL_BEAT_180 },
-                { DIFF_ONI, FULL_BEAT_180 }
-            };
-
             // for each diff: double previousGap = circles.FirstOrDefault()?.time ?? 0;
             var previousGap = new Dictionary<Beatmap.Difficulty, double>();
             previousGap.AddRange(_DIFFICULTIES, circles.FirstOrDefault()?.time ?? 0);
@@ -94,7 +85,19 @@ namespace MVTaikoChecks.Checks.Compose
             for (int i = 0; i < circles.Count; i++)
             {
                 var current = circles[i];
-                var next = i + 1 < circles.Count ? circles[i + 1] : null;
+                var next = circles.SafeGetIndex(i + 1);
+
+                var timing = beatmap.GetTimingLine<UninheritedLine>(current.time);
+                var normalizedMsPerBeat = timing.GetNormalizedMsPerBeat();
+
+                // for each diff: double minimalGap = ?;
+                var minimalGap = new Dictionary<Beatmap.Difficulty, double>()
+                {
+                    { DIFF_KANTAN, 3 * normalizedMsPerBeat },
+                    { DIFF_FUTSUU, 2 * normalizedMsPerBeat },
+                    { DIFF_MUZU, 1.5 * normalizedMsPerBeat },
+                    { DIFF_ONI, normalizedMsPerBeat }
+                };
 
                 var gap = (next?.time ?? double.MaxValue) - current.time;
 
@@ -108,7 +111,7 @@ namespace MVTaikoChecks.Checks.Compose
 
                     if (isRestMoment[diff])
                     {
-                        double beatsWithoutBreaks = Math.Floor((current.time - previousGap[diff]) / FULL_BEAT_180);
+                        double beatsWithoutBreaks = Math.Floor((current.time - previousGap[diff]) / normalizedMsPerBeat);
 
                         if (beatsWithoutBreaks >= 32)
                         {
@@ -143,10 +146,7 @@ namespace MVTaikoChecks.Checks.Compose
             Dictionary<Beatmap.Difficulty, bool> isRestMoment,
             double gap)
         {
-            if (diff == DIFF_MUZU)
-                Debugger.Break();
-
-            if (gap >= minimalGap[diff])
+            if (gap + MS_EPSILON >= minimalGap[diff])
                 isRestMoment[diff] = true;
         }
     }

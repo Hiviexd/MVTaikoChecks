@@ -5,6 +5,8 @@ using System.Linq;
 
 namespace MVTaikoChecks.Utils
 {
+#warning TODO: SPLIT INTO OWN UTILITY CLASSES
+
     public static class GeneralUtils
     {
         // comparison
@@ -25,5 +27,10 @@ namespace MVTaikoChecks.Utils
             foreach (var key in keys)
                 dictionary.Add(key, valueFactory());
         }
+
+        // collections
+        
+        public static T SafeGetIndex<T>(this List<T> collection, int index)
+            => index < collection.Count ? collection[index] : default;
     }
 }
