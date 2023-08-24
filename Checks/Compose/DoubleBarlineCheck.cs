@@ -62,7 +62,7 @@ namespace MVTaikoChecks.Checks.Compose
 #endif
 
                 new IssueTemplate(LEVEL_PROBLEM,
-                    "{0} Double barlines",
+                    "{0} Double barline",
                     "timestamp - ")
             }
         };
@@ -70,7 +70,6 @@ namespace MVTaikoChecks.Checks.Compose
         public override IEnumerable<Issue> GetIssues(Beatmap beatmap)
         {
             const double threshold = 50;
-            const double lower_threshold = 2;
 
             var redLines = beatmap.timingLines
                 .Where(x => x is UninheritedLine)
@@ -93,8 +92,7 @@ namespace MVTaikoChecks.Checks.Compose
 
                 var rest = distance % barlineGap;
 
-                // rest >= lower_threshold is to avoid rounding errors and false positives on red lines placed at the same time as a big white tick
-                if (rest - threshold <= 0 && rest >= lower_threshold)
+                if (rest - threshold <= 0 && rest >= 0)
                 {
                     yield return new Issue(
                         GetTemplate(_PROBLEM),
