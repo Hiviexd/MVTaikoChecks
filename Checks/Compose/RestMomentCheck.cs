@@ -62,7 +62,7 @@ namespace MVTaikoChecks.Checks.Compose
 
                 new IssueTemplate(LEVEL_MINOR,
                     "{0} {1} No rest moments for {2}, ensure this makes sense",
-                    "start - ", "end - ", "length")
+                    "start", "end", "length")
             },
 
             {
@@ -70,22 +70,22 @@ namespace MVTaikoChecks.Checks.Compose
 
                 new IssueTemplate(LEVEL_WARNING,
                     "{0} {1} No rest moments for {2}, ensure this makes sense",
-                    "start - ", "end - ", "length")
+                    "start", "end", "length")
             }
         };
 
         public override IEnumerable<Issue> GetIssues(Beatmap beatmap)
         {
-            var circles = beatmap.hitObjects.Where(x => x is Circle).ToList();
+            var objects = beatmap.hitObjects.ToList();
 
             // for each diff: double previousGap = circles.FirstOrDefault()?.time ?? 0;
             var previousGap = new Dictionary<Beatmap.Difficulty, double>();
-            previousGap.AddRange(_DIFFICULTIES, circles.FirstOrDefault()?.time ?? 0);
+            previousGap.AddRange(_DIFFICULTIES, objects.FirstOrDefault()?.time ?? 0);
 
-            for (int i = 0; i < circles.Count; i++)
+            for (int i = 0; i < objects.Count; i++)
             {
-                var current = circles[i];
-                var next = circles.SafeGetIndex(i + 1);
+                var current = objects[i];
+                var next = objects.SafeGetIndex(i + 1);
 
                 var timing = beatmap.GetTimingLine<UninheritedLine>(current.time);
                 var normalizedMsPerBeat = timing.GetNormalizedMsPerBeat();
@@ -113,22 +113,24 @@ namespace MVTaikoChecks.Checks.Compose
                     {
                         double beatsWithoutBreaks = Math.Floor((current.time - previousGap[diff]) / normalizedMsPerBeat);
 
-                        if (beatsWithoutBreaks >= 32)
+                        if ((diff == DIFF_KANTAN || diff == DIFF_FUTSUU) && beatsWithoutBreaks > 44 ||
+                            (diff != DIFF_KANTAN && diff != DIFF_FUTSUU && beatsWithoutBreaks >= 32))
                         {
                             yield return new Issue(
                                 GetTemplate(_WARNING),
                                 beatmap,
-                                Timestamp.Get(previousGap[diff]),
+                                Timestamp.Get(previousGap[diff]).Trim() + ">",
                                 Timestamp.Get(current.time),
                                 $"{beatsWithoutBreaks}/1"
                             ).ForDifficulties(diff);
                         }
-                        else if (beatsWithoutBreaks >= 20)
+                        else if ((diff == DIFF_KANTAN || diff == DIFF_FUTSUU) && beatsWithoutBreaks > 36 ||
+                                (diff != DIFF_KANTAN && diff != DIFF_FUTSUU && beatsWithoutBreaks > 20))
                         {
                             yield return new Issue(
                                 GetTemplate(_MINOR),
                                 beatmap,
-                                Timestamp.Get(previousGap[diff]),
+                                Timestamp.Get(previousGap[diff]).Trim() + ">",
                                 Timestamp.Get(current.time),
                                 $"{beatsWithoutBreaks}/1"
                             ).ForDifficulties(diff);
