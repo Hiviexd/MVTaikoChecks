@@ -92,7 +92,7 @@ namespace MVTaikoChecks.Checks.Compose
 
                 var rest = distance % barlineGap;
 
-                if (rest - threshold <= 0 && rest >= 0)
+                if (rest - threshold <= 0 && rest > 0.5)
                 {
                     yield return new Issue(
                         GetTemplate(_PROBLEM),
