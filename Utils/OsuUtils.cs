@@ -24,10 +24,10 @@ namespace MVTaikoChecks.Utils
         {
             double result = line.msPerBeat;
 
-            while (result < 250)
+            while (result < (60000/270)) // 270 BPM
                 result *= 2;
 
-            while (result > 500)
+            while (result > (60000/110)) // 110 BPM
                 result /= 2;
 
             return result;
