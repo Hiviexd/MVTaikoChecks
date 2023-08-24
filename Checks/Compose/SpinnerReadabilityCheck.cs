@@ -23,7 +23,7 @@ namespace MVTaikoChecks.Checks.Compose
     [Check]
     public class SpinnerReadabilityCheck : BeatmapCheck
     {
-        private const string _WARNING = nameof(_WARNING);
+        private const string _MINOR = nameof(_MINOR);
 
         private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[] { DIFF_KANTAN, DIFF_FUTSUU, DIFF_MUZU, DIFF_ONI, DIFF_INNER, DIFF_URA };
 
@@ -56,11 +56,11 @@ namespace MVTaikoChecks.Checks.Compose
         public override Dictionary<string, IssueTemplate> GetTemplates() => new Dictionary<string, IssueTemplate>()
         {
             {
-                _WARNING,
+                _MINOR,
 
                 new IssueTemplate(
-                    LEVEL_WARNING,
-                    "{0} The note is too close to the spinner",
+                    LEVEL_MINOR,
+                    "{0} Note is too close to spinner",
                     "timestamp - ")
                 .WithCause("The note is too close to the spinner")
             }
@@ -95,7 +95,7 @@ namespace MVTaikoChecks.Checks.Compose
                     if (gap < minimalGap[diff])
                     {
                         yield return new Issue(
-                            GetTemplate(_WARNING),
+                            GetTemplate(_MINOR),
                             beatmap,
                             Timestamp.Get(current, next)
                         ).ForDifficulties(diff);

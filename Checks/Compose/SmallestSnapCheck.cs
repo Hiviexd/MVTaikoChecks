@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using MapsetParser.objects;
@@ -22,7 +23,7 @@ namespace MVTaikoChecks.Checks.Compose
     [Check]
     public class SmallestSnapCheck : BeatmapCheck
     {
-        private const string _PROBLEM = nameof(_PROBLEM);
+        private const string _WARNING = nameof(_WARNING);
 
         private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[] { DIFF_KANTAN, DIFF_FUTSUU, DIFF_MUZU, DIFF_ONI };
 
@@ -55,13 +56,12 @@ namespace MVTaikoChecks.Checks.Compose
         public override Dictionary<string, IssueTemplate> GetTemplates() => new Dictionary<string, IssueTemplate>()
         {
             {
-                _PROBLEM,
+                _WARNING,
 
                 new IssueTemplate(
-                    LEVEL_PROBLEM,
-                    "{0} Too small gap between notes",
+                    LEVEL_WARNING,
+                    "{0} abnormally small gap, ensure it makes sense",
                     "timestamp - ")
-                .WithCause("Too small gap between notes")
             }
         };
 
@@ -88,7 +88,7 @@ namespace MVTaikoChecks.Checks.Compose
                     { DIFF_KANTAN, normalizedMsPerBeat / 2 },
                     { DIFF_FUTSUU, normalizedMsPerBeat / 3 },
                     { DIFF_MUZU, normalizedMsPerBeat / 6 },
-                    { DIFF_ONI, normalizedMsPerBeat / 8 }
+                    { DIFF_ONI, normalizedMsPerBeat / 6 }
                 };
 
                 var gap = (next?.time ?? double.MaxValue) - current.time;
@@ -104,7 +104,7 @@ namespace MVTaikoChecks.Checks.Compose
                     if (violatingGroupEnded[diff])
                     {
                         yield return new Issue(
-                            GetTemplate(_PROBLEM),
+                            GetTemplate(_WARNING),
                             beatmap,
                             Timestamp.Get(violatingGroup[diff].ToArray())
                         ).ForDifficulties(diff);
