@@ -46,15 +46,18 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 {
                     "Purpose",
-                    "Ensuring that a chain of objects doesn't exceed a certain threshold without a required rest moment."
+                    @"
+                    Ensuring that a chain of objects doesn't exceed a certain threshold without a required rest moment."
                 },
                 {
                     "Reasoning",
-                    "Abbnorally long chains without proper rest moments can be very straining to play."
+                    @"
+                    Abbnorally long chains without proper rest moments can be very straining to play."
                 },
                 {
-                    "Notes",
-                    "This does not work with the Muzukashii 3x1/1 rest moment yet. :)"
+                    "Note",
+                    @"
+                    This does not work with the Muzukashii 3x1/1 rest moment yet. :)"
                 }
             }
         };
@@ -67,6 +70,7 @@ namespace MVTaikoChecks.Checks.Compose
                 new IssueTemplate(LEVEL_MINOR,
                     "{0} {1} No rest moments for {2}, ensure this makes sense",
                     "start", "end", "length")
+                .WithCause("Chain length is surpassing the RC guideline, but not excessively")
             },
 
             {
@@ -75,6 +79,7 @@ namespace MVTaikoChecks.Checks.Compose
                 new IssueTemplate(LEVEL_WARNING,
                     "{0} {1} No rest moments for {2}, ensure this makes sense",
                     "start", "end", "length")
+                .WithCause("Chain length is excessively surpassing the RC guideline")
             }
         };
 

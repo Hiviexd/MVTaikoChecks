@@ -44,11 +44,13 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 {
                     "Purpose",
-                    "Preventing patterns with abnormally small snaps based on each difficulty's Ranking Criteria."
+                    @"
+                    Preventing patterns with abnormally small snaps based on each difficulty's Ranking Criteria."
                 },
                 {
                     "Reasoning",
-                    "Certain snaps are too difficult/unreasonable for certain difficulties."
+                    @"
+                    Certain snaps are too difficult/unreasonable for certain difficulties."
                 }
             }
         };
@@ -62,6 +64,7 @@ namespace MVTaikoChecks.Checks.Compose
                     LEVEL_WARNING,
                     "{0} abnormally small gap, ensure it makes sense",
                     "timestamp - ")
+                .WithCause("Gap between notes may be too small")
             }
         };
 

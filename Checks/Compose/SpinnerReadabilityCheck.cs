@@ -31,7 +31,7 @@ namespace MVTaikoChecks.Checks.Compose
         {
             Author = "Hivie & Phob",
             Category = "Compose",
-            Message = "Hard to read spinner",
+            Message = "Spinner readability",
 
             Difficulties = _DIFFICULTIES,
 
@@ -44,11 +44,13 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 {
                     "Purpose",
-                    "Pointing out spinners that may be very close to their preceding object."
+                    @"
+                    Pointing out spinners that may be very close to their preceding object."
                 },
                 {
                     "Reasoning",
-                    "Spinners can cause reading issues when being too close to their preceding object due to the visual overlap, especially in lower difficulties."
+                    @"
+                    Spinners can cause reading issues when being too close to their preceding object due to the visual overlap, especially in lower difficulties."
                 }
             }
         };

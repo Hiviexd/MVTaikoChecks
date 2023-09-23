@@ -40,15 +40,18 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 {
                     "Purpose",
-                    "Ensuring that finishers abide by each difficulty's Ranking Criteria."
+                    @"
+                    Ensuring that finishers abide by each difficulty's Ranking Criteria."
                 },
                 {
                     "Reasoning",
-                    "Improper finisher usage can lead to significant gamplay issues."
+                    @"
+                    Improper finisher usage can lead to significant gamplay issues."
                 },
                 {
                     "Note",
-                    "This check works well with Kantan, Futsuu, and Muzukashii difficulties. It's inconsistent with Oni and doesn't really work with Inner Oni difficulties, this will be fixed later."
+                    @"
+                    This check works well with Kantan, Futsuu, and Muzukashii difficulties. It's inconsistent with Oni and doesn't really work with Inner Oni difficulties, this will be fixed later."
                 }
             }
         };
@@ -62,6 +65,7 @@ namespace MVTaikoChecks.Checks.Compose
                     LEVEL_WARNING,
                     "{0} Abnormal finisher, ensure this makes sense",
                     "timestamp - ")
+                .WithCause("Finisher is potentially violating the Ranking Criteria")
             },
             {
                 _PROBLEM,
@@ -70,6 +74,7 @@ namespace MVTaikoChecks.Checks.Compose
                     LEVEL_PROBLEM,
                     "{0} Unrankable finisher",
                     "timestamp - ")
+                .WithCause("Finisher is violating the Ranking Criteria")
             }
         };
 
