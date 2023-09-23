@@ -46,6 +46,12 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 - Place the `MVTaikoChecks.dll` file in this folder
 - Restart Mapset Verifier
 
+## Known issues
+
+- Difficulties with custom names are always marked as "Easy" so make sure you manually change that to the correct diff, else you'll have an insane amount of flase positives
+  - this is an issue with MV itself so i can't fix this
+- 3x1/1 breaks in Muzukashiis are not supported yet, so you'll still have to check those manually
+
 ## Feature requests & bug reports
 
 If you have any feature requests or an issue to report, please open an issue or reach out to one of the active maintainers below:
