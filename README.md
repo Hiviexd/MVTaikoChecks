@@ -1,6 +1,6 @@
 # MVTaikoChecks
 
-a set of osu!taiko specific [Mapset Verifier](https://github.com/Naxesss/MapsetVerifier) checks
+A set of osu!taiko specific [Mapset Verifier](https://github.com/Naxesss/MapsetVerifier) checks
 
 > **Warning**
 > This plugin is still in heavy development, so [false positives and false negatives](https://en.wikipedia.org/wiki/False_positives_and_false_negatives) may occur. If you found something that isn't right, please refer to the *[Feature requests & bug reports](#feature-requests--bug-reports)* section.
@@ -49,7 +49,7 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 ## Known issues
 
 - Difficulties with custom names are always marked as "Easy" so make sure you manually change that to the correct diff, else you'll have an insane amount of flase positives
-  - this is an issue with MV itself so i can't fix this
+  - this is an issue with MV itself so I can't fix this
 - 3x1/1 breaks in Muzukashiis are not supported yet, so you'll still have to check those manually
 
 ## Feature requests & bug reports
@@ -60,7 +60,7 @@ If you have any feature requests or an issue to report, please open an issue or 
 
 ## Contributing
 
-If you're only here to download the plugin, you can stop reading now. If you're here to contribute, please open an issue to discuss your idea before you start working on it.
+If you're here to contribute, please open an issue to discuss your idea before you start working on it.
 
 ### Special thanks
 
