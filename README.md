@@ -38,7 +38,7 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 
 ## Installing
 
-- Download the latest release of `MVTaikoChecks.dll`
+- Download the latest release of `MVTaikoChecks.dll` [here](https://github.com/Hiviexd/MVTaikoChecks/releases/latest)
 - Click the settings icon (top right) in Mapset Verifier
 - Scroll down to the `Shortcuts` section
 - Click the `Open externals folder` icon
