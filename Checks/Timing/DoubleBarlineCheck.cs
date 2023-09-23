@@ -31,7 +31,7 @@ namespace MVTaikoChecks.Checks.Compose
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
         {
             Author = "Hivie & Phob",
-            Category = "Compose",
+            Category = "Timing",
             Message = "Double barlines",
 
             Difficulties = _DIFFICULTIES,
@@ -45,11 +45,13 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 {
                     "Purpose",
-                    "Ensuring that there are no two barlines within 50ms of each other."
+                    @"
+                    Ensuring that there are no two barlines within 50ms of each other."
                 },
                 {
                     "Reasoning",
-                    "Double barlines are caused by rounding errors, visually disruptive and confusing in the representation of a song's downbeat."
+                    @"
+                    Double barlines are caused by rounding errors, visually disruptive and confusing in the representation of a song's downbeat."
                 }
             }
         };
@@ -61,12 +63,14 @@ namespace MVTaikoChecks.Checks.Compose
                 new IssueTemplate(LEVEL_PROBLEM,
                     "{0} Double barline",
                     "timestamp - ")
+                .WithCause("Red line is extremely close to a downbeat from the previous red line")
             },
             {
                 _WARNING,
                 new IssueTemplate(LEVEL_WARNING,
                     "{0} Potential double barline, doublecheck manually",
                     "timestamp - ")
+                .WithCause("Red line is extremely close to a downbeat from the previous red line")
             }
         };
 
