@@ -68,8 +68,8 @@ namespace MVTaikoChecks.Checks.Compose
                 _MINOR,
 
                 new IssueTemplate(LEVEL_MINOR,
-                    "{0} {1} No rest moments for {2}, ensure this makes sense",
-                    "start", "end", "length")
+                    "{0} {1} No {2} rest moments for {3}, ensure this makes sense",
+                    "start", "end", "break", "length")
                 .WithCause("Chain length is surpassing the RC guideline, but not excessively")
             },
 
@@ -77,8 +77,8 @@ namespace MVTaikoChecks.Checks.Compose
                 _WARNING,
 
                 new IssueTemplate(LEVEL_WARNING,
-                    "{0} {1} No rest moments for {2}, ensure this makes sense",
-                    "start", "end", "length")
+                    "{0} {1} No {2} rest moments for {3}, ensure this makes sense",
+                    "start", "end", "break", "length")
                 .WithCause("Chain length is excessively surpassing the RC guideline")
             }
         };
@@ -116,6 +116,17 @@ namespace MVTaikoChecks.Checks.Compose
 
                 foreach (var diff in _DIFFICULTIES)
                 {
+                    var breakType = "";
+
+                    breakType = diff switch
+                    {
+                        DIFF_KANTAN => "3/1",
+                        DIFF_FUTSUU => "2/1",
+                        DIFF_MUZU => "3/2",
+                        DIFF_ONI => "1/1",
+                        _ => "",
+                    };
+
                     CheckAndHandleIssues(diff, minimalGap, isRestMoment, gap);
 
                     if (isRestMoment[diff])
@@ -130,6 +141,7 @@ namespace MVTaikoChecks.Checks.Compose
                                 beatmap,
                                 Timestamp.Get(previousGap[diff]).Trim() + ">",
                                 Timestamp.Get(current.time),
+                                breakType,
                                 $"{beatsWithoutBreaks}/1"
                             ).ForDifficulties(diff);
                         }
@@ -141,6 +153,7 @@ namespace MVTaikoChecks.Checks.Compose
                                 beatmap,
                                 Timestamp.Get(previousGap[diff]).Trim() + ">",
                                 Timestamp.Get(current.time),
+                                breakType,
                                 $"{beatsWithoutBreaks}/1"
                             ).ForDifficulties(diff);
                         }
