@@ -31,7 +31,7 @@ namespace MVTaikoChecks.Checks.Compose
 
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
         {
-            Author = "Phob",
+            Author = "Hivie & Phob",
             Category = "Compose",
             Message = "Rest moments",
 
@@ -46,11 +46,15 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 {
                     "Purpose",
-                    "TODO"
+                    "Ensuring that a chain of objects doesn't exceed a certain threshold without a required rest moment."
                 },
                 {
                     "Reasoning",
-                    "TODO"
+                    "Abbnorally long chains without proper rest moments can be very straining to play."
+                },
+                {
+                    "Notes",
+                    "This does not work with the Muzukashii 3x1/1 rest moment yet. :)"
                 }
             }
         };

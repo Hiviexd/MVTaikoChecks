@@ -29,7 +29,7 @@ namespace MVTaikoChecks.Checks.Compose
 
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
         {
-            Author = "Phob",
+            Author = "Hivie & Phob",
             Category = "Compose",
             Message = "Unrankable snapping",
 
@@ -44,11 +44,11 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 {
                     "Purpose",
-                    "TODO"
+                    "Preventing patterns with abnormally small snaps based on each difficulty's Ranking Criteria."
                 },
                 {
                     "Reasoning",
-                    "TODO"
+                    "Certain snaps are too difficult/unreasonable for certain difficulties."
                 }
             }
         };

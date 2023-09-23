@@ -23,12 +23,14 @@ namespace MVTaikoChecks.Checks.Compose
     public class DoubleBarlineCheck : BeatmapCheck
     {
         private const string _PROBLEM = nameof(_PROBLEM);
+        private const string _WARNING = nameof(_WARNING);
+
 
         private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[] { DIFF_KANTAN, DIFF_FUTSUU, DIFF_MUZU, DIFF_ONI, DIFF_INNER, DIFF_URA };
 
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
         {
-            Author = "Phob",
+            Author = "Hivie & Phob",
             Category = "Compose",
             Message = "Double barlines",
 
@@ -43,11 +45,11 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 {
                     "Purpose",
-                    "TODO"
+                    "Ensuring that there are no two barlines within 50ms of each other."
                 },
                 {
                     "Reasoning",
-                    "TODO"
+                    "Double barlines are caused by rounding errors, visually disruptive and confusing in the representation of a song's downbeat."
                 }
             }
         };
@@ -56,13 +58,14 @@ namespace MVTaikoChecks.Checks.Compose
         {
             {
                 _PROBLEM,
-
-#if RELEASE
-#warning TODO: WORDING
-#endif
-
                 new IssueTemplate(LEVEL_PROBLEM,
                     "{0} Double barline",
+                    "timestamp - ")
+            },
+            {
+                _WARNING,
+                new IssueTemplate(LEVEL_WARNING,
+                    "{0} Potential double barline, doublecheck manually",
                     "timestamp - ")
             }
         };
@@ -92,13 +95,24 @@ namespace MVTaikoChecks.Checks.Compose
 
                 var rest = distance % barlineGap;
 
-                if (rest - threshold <= 0 && rest > 0.5)
+                if (rest - threshold <= 0 && rest > 0)
                 {
-                    yield return new Issue(
-                        GetTemplate(_PROBLEM),
-                        beatmap,
-                        Timestamp.Get(next.offset)
-                    ).ForDifficulties(_DIFFICULTIES);
+                    if (rest >= 0.5)
+                    {
+                        yield return new Issue(
+                            GetTemplate(_PROBLEM),
+                            beatmap,
+                            Timestamp.Get(next.offset)
+                        ).ForDifficulties(_DIFFICULTIES);
+                    }
+                    else
+                    {
+                        yield return new Issue(
+                            GetTemplate(_WARNING),
+                            beatmap,
+                            Timestamp.Get(next.offset)
+                        ).ForDifficulties(_DIFFICULTIES);
+                    }
                 }
             }
         }

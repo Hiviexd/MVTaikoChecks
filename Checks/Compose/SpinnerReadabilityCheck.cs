@@ -29,7 +29,7 @@ namespace MVTaikoChecks.Checks.Compose
 
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
         {
-            Author = "Phob",
+            Author = "Hivie & Phob",
             Category = "Compose",
             Message = "Hard to read spinner",
 
@@ -44,11 +44,11 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 {
                     "Purpose",
-                    "TODO"
+                    "Pointing out spinners that may be very close to their preceding object."
                 },
                 {
                     "Reasoning",
-                    "TODO"
+                    "Spinners can cause reading issues when being too close to their preceding object due to the visual overlap, especially in lower difficulties."
                 }
             }
         };

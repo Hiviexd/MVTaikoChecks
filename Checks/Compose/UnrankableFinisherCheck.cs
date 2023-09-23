@@ -40,11 +40,15 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 {
                     "Purpose",
-                    "TODO"
+                    "Ensuring that finishers abide by each difficulty's Ranking Criteria."
                 },
                 {
                     "Reasoning",
-                    "TODO"
+                    "Improper finisher usage can lead to significant gamplay issues."
+                },
+                {
+                    "Note",
+                    "This check works well with Kantan, Futsuu, and Muzukashii difficulties. It's inconsistent with Oni and doesn't really work with Inner Oni difficulties, this will be fixed later."
                 }
             }
         };
