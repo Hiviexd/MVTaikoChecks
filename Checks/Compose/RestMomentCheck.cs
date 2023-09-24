@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using MapsetParser.objects;
-using MapsetParser.objects.hitobjects;
 using MapsetParser.objects.timinglines;
 using MapsetParser.statics;
 
@@ -17,7 +16,6 @@ using static MVTaikoChecks.Global;
 using static MVTaikoChecks.Aliases.Difficulty;
 using static MVTaikoChecks.Aliases.Mode;
 using static MVTaikoChecks.Aliases.Level;
-using System.Diagnostics;
 
 namespace MVTaikoChecks.Checks.Compose
 {
@@ -26,12 +24,13 @@ namespace MVTaikoChecks.Checks.Compose
     {
         private const string _MINOR = nameof(_MINOR);
         private const string _WARNING = nameof(_WARNING);
+        private const bool _DEBUG_SEE_ALL_CONTINUOUS_MAPPING = false;
 
         private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[] { DIFF_KANTAN, DIFF_FUTSUU, DIFF_MUZU, DIFF_ONI };
 
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
         {
-            Author = "Hivie & Phob",
+            Author = "Hivie, Phob, Nostril",
             Category = "Compose",
             Message = "Rest moments",
 
@@ -52,12 +51,7 @@ namespace MVTaikoChecks.Checks.Compose
                 {
                     "Reasoning",
                     @"
-                    Abbnorally long chains without proper rest moments can be very straining to play."
-                },
-                {
-                    "Note",
-                    @"
-                    This does not work with the Muzukashii 3x1/1 rest moment yet. :)"
+                    Abnormally long chains without proper rest moments can be very straining to play."
                 }
             }
         };
@@ -87,91 +81,167 @@ namespace MVTaikoChecks.Checks.Compose
         {
             var objects = beatmap.hitObjects.ToList();
 
-            // for each diff: double previousGap = circles.FirstOrDefault()?.time ?? 0;
-            var previousGap = new Dictionary<Beatmap.Difficulty, double>();
-            previousGap.AddRange(_DIFFICULTIES, objects.FirstOrDefault()?.time ?? 0);
-
-            for (int i = 0; i < objects.Count; i++)
+            // for each diff: acceptable versions of { # of consecutive gaps required, number of beats required per gap }
+            var minimalGapBeats = new Dictionary<Beatmap.Difficulty, Dictionary<int, double>>()
             {
-                var current = objects[i];
-                var next = objects.SafeGetIndex(i + 1);
+                { DIFF_KANTAN, new Dictionary<int, double>() {
+                    { 1, 3.0 }
+                }},
+                { DIFF_FUTSUU, new Dictionary<int, double>() {
+                    { 1, 2.0 }
+                }},
+                { DIFF_MUZU, new Dictionary<int, double>() {
+                    { 1, 1.5 },
+                    { 3, 1.0 },
+                }},
+                { DIFF_ONI, new Dictionary<int, double>() {
+                    { 1, 1.0 }
+                }}
+            };
 
-                var timing = beatmap.GetTimingLine<UninheritedLine>(current.time);
-                var normalizedMsPerBeat = timing.GetNormalizedMsPerBeat();
+            // for each diff: string to output describing rest moment requirements
+            var breakTypes = new Dictionary<Beatmap.Difficulty, string>()
+            {
+                { DIFF_KANTAN, "3/1"},
+                { DIFF_FUTSUU, "2/1"},
+                { DIFF_MUZU, "3/2 or three consecutive 1/1"},
+                { DIFF_ONI, "1/1"}
+            };
 
-                // for each diff: double minimalGap = ?;
-                var minimalGap = new Dictionary<Beatmap.Difficulty, double>()
+            // for each diff: string to output describing rest moment requirements
+            var continuousMappingMinorLimit = new Dictionary<Beatmap.Difficulty, double>()
+            {
+                { DIFF_KANTAN, 36},
+                { DIFF_FUTSUU, 20},
+                { DIFF_MUZU, 32},
+                { DIFF_ONI, 32}
+            };
+
+            // for each diff: string to output describing rest moment requirements
+            var continuousMappingWarningLimit = new Dictionary<Beatmap.Difficulty, double>()
+            {
+                { DIFF_KANTAN, 44},
+                { DIFF_FUTSUU, 44},
+                { DIFF_MUZU, 32},
+                { DIFF_ONI, 32}
+            };
+
+            foreach (var diff in _DIFFICULTIES)
+            {
+                var currentContinuousSectionStartTimeMs = objects.FirstOrDefault()?.time ?? 0;
+                var wasLastObjectRestMoment = true;
+                for (int i = 0; i < objects.Count; i++)
                 {
-                    { DIFF_KANTAN, 3 * normalizedMsPerBeat },
-                    { DIFF_FUTSUU, 2 * normalizedMsPerBeat },
-                    { DIFF_MUZU, 1.5 * normalizedMsPerBeat },
-                    { DIFF_ONI, normalizedMsPerBeat }
-                };
+                    var current = objects.SafeGetIndex(i);
+                    var timing = beatmap.GetTimingLine<UninheritedLine>(current.time);
+                    var normalizedMsPerBeat = timing.GetNormalizedMsPerBeat();
 
-                var gap = (next?.time ?? double.MaxValue) - current.time;
-
-                // for each diff: bool isRestMoment = false;
-                var isRestMoment = new Dictionary<Beatmap.Difficulty, bool>();
-                isRestMoment.AddRange(_DIFFICULTIES, false);
-
-                foreach (var diff in _DIFFICULTIES)
-                {
-                    var breakType = "";
-
-                    breakType = diff switch
+                    // identify boundaries of continuous mapping
+                    var isBeginningOfContinuousMapping = false;
+                    var isEndOfContinuousMapping = false;
+                    foreach (var acceptableRestMoment in minimalGapBeats[diff])
                     {
-                        DIFF_KANTAN => "3/1",
-                        DIFF_FUTSUU => "2/1",
-                        DIFF_MUZU => "3/2",
-                        DIFF_ONI => "1/1",
-                        _ => "",
-                    };
+                        // convert minimal gap beats to milliseconds
+                        var minimalRestMomentGapMs = acceptableRestMoment.Value * normalizedMsPerBeat;
 
-                    CheckAndHandleIssues(diff, minimalGap, isRestMoment, gap);
+                        // check if this is beginning of continuous mapping
+                        var smallestConsecutiveGapMs = double.MaxValue;
+                        for (int j = 0; j < acceptableRestMoment.Key; j++)
+                        {
+                            // out of bounds check
+                            if (i - j - 1 < 0)
+                            {
+                                continue;
+                            }
 
-                    if (isRestMoment[diff])
+                            var gapBeginObject = objects.SafeGetIndex(i - j - 1);
+                            var gapEndObject = objects.SafeGetIndex(i - j);
+
+                            var gap = gapEndObject.time - gapBeginObject.GetEndTime();
+                            smallestConsecutiveGapMs = Math.Min(smallestConsecutiveGapMs, gap);
+                        }
+
+                        // check if the backward-looking current string of notes is a rest moment (end of continuous mapping)
+                        if (smallestConsecutiveGapMs + MS_EPSILON >= minimalRestMomentGapMs)
+                        {
+                            isBeginningOfContinuousMapping = true;
+                        }
+
+                        // check if this is end of continuous mapping
+                        smallestConsecutiveGapMs = double.MaxValue;
+                        for (int j = 0; j < acceptableRestMoment.Key; j++)
+                        {
+                            // out of bounds check
+                            if (i + j + 1 >= objects.Count)
+                            {
+                                continue;
+                            }
+
+                            var gapBeginObject = objects.SafeGetIndex(i + j);
+                            var gapEndObject = objects.SafeGetIndex(i + j + 1);
+
+                            var gap = gapEndObject.time - gapBeginObject.GetEndTime();
+                            smallestConsecutiveGapMs = Math.Min(smallestConsecutiveGapMs, gap);
+                        }
+
+                        // check if the forward-looking current string of notes is a rest moment (end of continuous mapping)
+                        if (smallestConsecutiveGapMs + MS_EPSILON >= minimalRestMomentGapMs)
+                        {
+                            isEndOfContinuousMapping = true;
+                        }
+                    }
+
+                    // check if this is the first note of a continuously mapped section
+                    if (isBeginningOfContinuousMapping)
                     {
-                        double beatsWithoutBreaks = Math.Floor((current.time - previousGap[diff]) / normalizedMsPerBeat);
+                        currentContinuousSectionStartTimeMs = current.time;
+                    }
 
-                        if ((diff == DIFF_KANTAN || diff == DIFF_FUTSUU) && beatsWithoutBreaks > 44 ||
-                            (diff != DIFF_KANTAN && diff != DIFF_FUTSUU && beatsWithoutBreaks >= 32))
+                    // check if this is the last note of a continuously mapped section
+                    if (isEndOfContinuousMapping)
+                    {
+                        var continuouslyMappedDurationMs = current.GetEndTime() - currentContinuousSectionStartTimeMs;
+
+                        double beatsWithoutBreaks = Math.Floor((continuouslyMappedDurationMs + MS_EPSILON) / normalizedMsPerBeat);
+
+                        if (beatsWithoutBreaks > 0 && _DEBUG_SEE_ALL_CONTINUOUS_MAPPING)
                         {
                             yield return new Issue(
                                 GetTemplate(_WARNING),
                                 beatmap,
-                                Timestamp.Get(previousGap[diff]).Trim() + ">",
-                                Timestamp.Get(current.time),
-                                breakType,
+                                Timestamp.Get(currentContinuousSectionStartTimeMs).Trim() + ">",
+                                Timestamp.Get(current.GetEndTime()),
+                                breakTypes[diff],
                                 $"{beatsWithoutBreaks}/1"
                             ).ForDifficulties(diff);
                         }
-                        else if ((diff == DIFF_KANTAN || diff == DIFF_FUTSUU) && beatsWithoutBreaks > 36 ||
-                                (diff != DIFF_KANTAN && diff != DIFF_FUTSUU && beatsWithoutBreaks > 20))
+                        else if (beatsWithoutBreaks > continuousMappingWarningLimit[diff])
+                        {
+                            yield return new Issue(
+                                GetTemplate(_WARNING),
+                                beatmap,
+                                Timestamp.Get(currentContinuousSectionStartTimeMs).Trim() + ">",
+                                Timestamp.Get(current.time),
+                                breakTypes[diff],
+                                $"{beatsWithoutBreaks}/1"
+                            ).ForDifficulties(diff);
+                        }
+                        else if (beatsWithoutBreaks > continuousMappingMinorLimit[diff])
                         {
                             yield return new Issue(
                                 GetTemplate(_MINOR),
                                 beatmap,
-                                Timestamp.Get(previousGap[diff]).Trim() + ">",
+                                Timestamp.Get(currentContinuousSectionStartTimeMs).Trim() + ">",
                                 Timestamp.Get(current.time),
-                                breakType,
+                                breakTypes[diff],
                                 $"{beatsWithoutBreaks}/1"
                             ).ForDifficulties(diff);
                         }
-
-                        previousGap[diff] = next?.time ?? double.MaxValue;
                     }
+
+                    wasLastObjectRestMoment = isBeginningOfContinuousMapping || isEndOfContinuousMapping;
                 }
             }
-        }
-
-        private static void CheckAndHandleIssues(
-            Beatmap.Difficulty diff,
-            Dictionary<Beatmap.Difficulty, double> minimalGap,
-            Dictionary<Beatmap.Difficulty, bool> isRestMoment,
-            double gap)
-        {
-            if (gap + MS_EPSILON >= minimalGap[diff])
-                isRestMoment[diff] = true;
         }
     }
 }
