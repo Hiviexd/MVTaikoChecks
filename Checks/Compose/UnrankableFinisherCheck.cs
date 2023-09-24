@@ -21,7 +21,7 @@ namespace MVTaikoChecks.Checks.Compose
         private const string _WARNING = nameof(_WARNING);
         private const string _PROBLEM = nameof(_PROBLEM);
 
-        private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[] { DIFF_KANTAN, DIFF_FUTSUU, DIFF_MUZU, DIFF_ONI, DIFF_INNER, DIFF_URA };
+        private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[] { DIFF_KANTAN, DIFF_FUTSUU, DIFF_MUZU, DIFF_ONI, DIFF_INNER, DIFF_HELL };
 
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
         {
@@ -104,7 +104,7 @@ namespace MVTaikoChecks.Checks.Compose
                     { DIFF_MUZU, normalizedMsPerBeat / 3 },
                     { DIFF_ONI, normalizedMsPerBeat / 4 },
                     { DIFF_INNER, normalizedMsPerBeat / 4 },
-                    { DIFF_URA, normalizedMsPerBeat / 4 },
+                    { DIFF_HELL, normalizedMsPerBeat / 4 },
                 };
 
                 var nextGap = (next?.time ?? double.MaxValue) - current.time;
@@ -131,7 +131,7 @@ namespace MVTaikoChecks.Checks.Compose
 
                             violatingGroup[diff].Clear();
                         }
-                        else if (diff == DIFF_INNER || diff == DIFF_URA)
+                        else if (diff == DIFF_INNER || diff == DIFF_HELL)
                         {
                             if (nextGap < minimalGap[diff])
                             {

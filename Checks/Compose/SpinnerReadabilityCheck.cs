@@ -25,7 +25,7 @@ namespace MVTaikoChecks.Checks.Compose
     {
         private const string _MINOR = nameof(_MINOR);
 
-        private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[] { DIFF_KANTAN, DIFF_FUTSUU, DIFF_MUZU, DIFF_ONI, DIFF_INNER, DIFF_URA };
+        private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[] { DIFF_KANTAN, DIFF_FUTSUU, DIFF_MUZU, DIFF_ONI, DIFF_INNER, DIFF_HELL };
 
         public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
         {
