@@ -1,9 +1,6 @@
 ﻿using MapsetParser.objects;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using MapsetParser.objects.timinglines;
+using System.IO;
 
 namespace MVTaikoChecks.Utils
 {
@@ -20,10 +17,10 @@ namespace MVTaikoChecks.Utils
         {
             double result = line.msPerBeat;
 
-            while (result <= (60000/270)) // 270 BPM
+            while (result <= (60000 / 270)) // 270 BPM
                 result *= 2;
 
-            while (result >= (60000/110)) // 110 BPM
+            while (result >= (60000 / 110)) // 110 BPM
                 result /= 2;
 
             while (result >= (60000 / 130)) // 130 BPM

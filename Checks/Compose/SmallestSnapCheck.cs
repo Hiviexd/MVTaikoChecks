@@ -75,7 +75,7 @@ namespace MVTaikoChecks.Checks.Compose
             // for each diff: var violatingGroup = new List<HitObject>();
             // lambda is used, because bare "new List<HitObject>()" would set the same instance in each pair
             var violatingGroup = new Dictionary<Beatmap.Difficulty, List<HitObject>>();
-            violatingGroup.AddRange(_DIFFICULTIES, () => new List<HitObject>() );
+            violatingGroup.AddRange(_DIFFICULTIES, () => new List<HitObject>());
 
             for (int i = 0; i < circles.Count; i++)
             {

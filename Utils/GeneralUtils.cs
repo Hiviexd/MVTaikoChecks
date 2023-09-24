@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 
 namespace MVTaikoChecks.Utils
 {
@@ -29,7 +27,7 @@ namespace MVTaikoChecks.Utils
         }
 
         // collections
-        
+
         public static T SafeGetIndex<T>(this List<T> collection, int index)
             => index < collection.Count ? collection[index] : default;
     }
