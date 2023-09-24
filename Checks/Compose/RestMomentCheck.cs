@@ -112,9 +112,9 @@ namespace MVTaikoChecks.Checks.Compose
             var continuousMappingMinorLimit = new Dictionary<Beatmap.Difficulty, double>()
             {
                 { DIFF_KANTAN, 36},
-                { DIFF_FUTSUU, 20},
-                { DIFF_MUZU, 32},
-                { DIFF_ONI, 32}
+                { DIFF_FUTSUU, 36},
+                { DIFF_MUZU, 20},
+                { DIFF_ONI, 20}
             };
 
             // for each diff: string to output describing continuous mapping limitations (warning severity)
