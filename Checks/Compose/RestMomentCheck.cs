@@ -129,6 +129,7 @@ namespace MVTaikoChecks.Checks.Compose
             foreach (var diff in _DIFFICULTIES)
             {
                 var currentContinuousSectionStartTimeMs = objects.FirstOrDefault()?.time ?? 0;
+                var isWithinContinuousMapping = false;
                 for (int i = 0; i < objects.Count; i++)
                 {
                     var current = objects.SafeGetIndex(i);
@@ -193,12 +194,14 @@ namespace MVTaikoChecks.Checks.Compose
                     // check if this is the first note of a continuously mapped section, if so record the timestamp for later once we find the end
                     if (isBeginningOfContinuousMapping)
                     {
+                        isWithinContinuousMapping = true;
                         currentContinuousSectionStartTimeMs = current.time;
                     }
 
                     // check if this is the last note of a continuously mapped section, if so check if it's too long
-                    if (isEndOfContinuousMapping)
+                    if (isEndOfContinuousMapping && isWithinContinuousMapping)
                     {
+                        isWithinContinuousMapping = false;
                         var continuouslyMappedDurationMs = current.GetEndTime() - currentContinuousSectionStartTimeMs;
 
                         double beatsWithoutBreaks = Math.Floor((continuouslyMappedDurationMs + MS_EPSILON) / normalizedMsPerBeat);
