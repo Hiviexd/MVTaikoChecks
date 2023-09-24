@@ -104,7 +104,7 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 { DIFF_KANTAN, "3/1"},
                 { DIFF_FUTSUU, "2/1"},
-                { DIFF_MUZU, "3/2 or three consecutive 1/1"},
+                { DIFF_MUZU, "3/2 or 3 x 1/1"},
                 { DIFF_ONI, "1/1"}
             };
 
