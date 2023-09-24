@@ -38,7 +38,7 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 
 ## Installing
 
-- Download the latest release of `MVTaikoChecks.dll` [here](https://github.com/Hiviexd/MVTaikoChecks/releases/latest)
+- Download the [latest release](https://github.com/Hiviexd/MVTaikoChecks/releases/latest) of `MVTaikoChecks.dll` 
 - Click the settings icon (top right) in Mapset Verifier
 - Scroll down to the `Shortcuts` section
 - Click the `Open externals folder` icon
@@ -49,8 +49,6 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 ## Known issues
 
 - Difficulties with custom names are always marked as "Easy" so make sure you manually change that to the correct diff, else you'll have an insane amount of flase positives
-  - this is an issue with MV itself so I can't fix this
-- 3x1/1 breaks in Muzukashiis are not supported yet, so you'll still have to check those manually
 
 ## Feature requests & bug reports
 
