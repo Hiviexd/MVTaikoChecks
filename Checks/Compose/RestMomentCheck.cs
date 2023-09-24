@@ -129,7 +129,6 @@ namespace MVTaikoChecks.Checks.Compose
             foreach (var diff in _DIFFICULTIES)
             {
                 var currentContinuousSectionStartTimeMs = objects.FirstOrDefault()?.time ?? 0;
-                var wasLastObjectRestMoment = true;
                 for (int i = 0; i < objects.Count; i++)
                 {
                     var current = objects.SafeGetIndex(i);
@@ -238,8 +237,6 @@ namespace MVTaikoChecks.Checks.Compose
                             ).ForDifficulties(diff);
                         }
                     }
-
-                    wasLastObjectRestMoment = isBeginningOfContinuousMapping || isEndOfContinuousMapping;
                 }
             }
         }
