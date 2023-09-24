@@ -108,7 +108,7 @@ namespace MVTaikoChecks.Checks.Compose
                 { DIFF_ONI, "1/1"}
             };
 
-            // for each diff: string to output describing rest moment requirements
+            // for each diff: string to output describing continuous mapping limitations (minor issue severity)
             var continuousMappingMinorLimit = new Dictionary<Beatmap.Difficulty, double>()
             {
                 { DIFF_KANTAN, 36},
@@ -117,7 +117,7 @@ namespace MVTaikoChecks.Checks.Compose
                 { DIFF_ONI, 32}
             };
 
-            // for each diff: string to output describing rest moment requirements
+            // for each diff: string to output describing continuous mapping limitations (warning severity)
             var continuousMappingWarningLimit = new Dictionary<Beatmap.Difficulty, double>()
             {
                 { DIFF_KANTAN, 44},
@@ -161,7 +161,7 @@ namespace MVTaikoChecks.Checks.Compose
                             smallestConsecutiveGapMs = Math.Min(smallestConsecutiveGapMs, gap);
                         }
 
-                        // check if the backward-looking current string of notes is a rest moment (end of continuous mapping)
+                        // check if the backward-looking current string of notes is a rest moment
                         if (smallestConsecutiveGapMs + MS_EPSILON >= minimalRestMomentGapMs)
                         {
                             isBeginningOfContinuousMapping = true;
@@ -184,20 +184,20 @@ namespace MVTaikoChecks.Checks.Compose
                             smallestConsecutiveGapMs = Math.Min(smallestConsecutiveGapMs, gap);
                         }
 
-                        // check if the forward-looking current string of notes is a rest moment (end of continuous mapping)
+                        // check if the forward-looking current string of notes is a rest moment
                         if (smallestConsecutiveGapMs + MS_EPSILON >= minimalRestMomentGapMs)
                         {
                             isEndOfContinuousMapping = true;
                         }
                     }
 
-                    // check if this is the first note of a continuously mapped section
+                    // check if this is the first note of a continuously mapped section, if so record the timestamp for later once we find the end
                     if (isBeginningOfContinuousMapping)
                     {
                         currentContinuousSectionStartTimeMs = current.time;
                     }
 
-                    // check if this is the last note of a continuously mapped section
+                    // check if this is the last note of a continuously mapped section, if so check if it's too long
                     if (isEndOfContinuousMapping)
                     {
                         var continuouslyMappedDurationMs = current.GetEndTime() - currentContinuousSectionStartTimeMs;
