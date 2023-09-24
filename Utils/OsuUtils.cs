@@ -1,5 +1,6 @@
 ﻿using MapsetParser.objects;
 using MapsetParser.objects.timinglines;
+using System;
 using System.IO;
 
 namespace MVTaikoChecks.Utils
@@ -27,6 +28,17 @@ namespace MVTaikoChecks.Utils
                 result /= 1.5;
 
             return result;
+        }
+
+        public static double NormalizeHpWithDrain(double hp, double drain)
+        {
+            if (drain <= 60 * 1000) // 1:00 or less gets a HP buff by 1
+                return Math.Ceiling(hp + 1); // rounding up to avoid decimal values
+            if (drain >= (4 * 60 * 1000) + (45 * 1000)) // 4:45 ore more gets a HP nerf by 2
+                return Math.Ceiling(hp - 2);
+            if (drain >= (3 * 60 * 1000) + (45 * 1000)) // 3:45 or more gets a HP nerf by 1
+                return Math.Ceiling(hp - 1);
+            return hp;
         }
     }
 }
