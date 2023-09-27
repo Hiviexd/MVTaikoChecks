@@ -16,12 +16,12 @@ using static MVTaikoChecks.Aliases.Mode;
 namespace MVTaikoChecks.Checks.Settings
 {
     [Check]
-    public class HpOdCheck : BeatmapCheck
+    public class DiffSettingsCheck : BeatmapCheck
     {
         private const string _MINOR = nameof(_MINOR);
         private const string _WARNING = nameof(_WARNING);
-        private const bool _DEBUG_SEE_ALL_HP = false;
-        private const bool _DEBUG_SEE_ALL_OD = false;
+        // private const bool _DEBUG_SEE_ALL_HP = false;
+        // private const bool _DEBUG_SEE_ALL_OD = false;
         private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[]
         {
             DIFF_KANTAN,
@@ -96,7 +96,7 @@ namespace MVTaikoChecks.Checks.Settings
                         "Current value is considerably different from the recommended limits."
                     )
                 },
-                {
+                /*{
                     "debug",
                     new IssueTemplate(
                         LEVEL_WARNING,
@@ -105,7 +105,7 @@ namespace MVTaikoChecks.Checks.Settings
                         "limit",
                         "current"
                     ).WithCause("Debug")
-                }
+                }*/
             };
 
         public override IEnumerable<Issue> GetIssues(Beatmap beatmap)
@@ -141,7 +141,7 @@ namespace MVTaikoChecks.Checks.Settings
                     drain
                 );
 
-                if (_DEBUG_SEE_ALL_HP)
+                /*if (_DEBUG_SEE_ALL_HP)
                 {
                     yield return new Issue(
                         GetTemplate("debug"),
@@ -150,7 +150,7 @@ namespace MVTaikoChecks.Checks.Settings
                         normalizedRecommendedHp,
                         HP
                     ).ForDifficulties(diff);
-                };
+                };*/
 
                 if (Math.Abs(HP - normalizedRecommendedHp) > 1)
                 {
@@ -172,7 +172,7 @@ namespace MVTaikoChecks.Checks.Settings
                     ).ForDifficulties(diff);
                 };
 
-                if (_DEBUG_SEE_ALL_OD)
+                /*if (_DEBUG_SEE_ALL_OD)
                 {
                     yield return new Issue(
                         GetTemplate("debug"),
@@ -181,7 +181,7 @@ namespace MVTaikoChecks.Checks.Settings
                         recommendedOd[diff],
                         OD
                     ).ForDifficulties(diff);
-                };
+                };*/
 
                 if (Math.Abs(OD - recommendedOd[diff]) > 0.5)
                 {
