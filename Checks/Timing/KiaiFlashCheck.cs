@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 
 using MapsetParser.objects;
 using MapsetParser.objects.timinglines;
@@ -62,32 +64,51 @@ namespace MVTaikoChecks.Checks.Timing
 
         public override IEnumerable<Issue> GetIssues(Beatmap beatmap)
         {
-            foreach (var line in beatmap.timingLines)
-            {
-                if (line.kiai != line.Next(skipConcurrent: true).kiai)
-                {
-                    var timing = beatmap.GetTimingLine<UninheritedLine>(line.offset);
-                    var normalizedMsPerBeat = timing.GetNormalizedMsPerBeat();
-                    double gap = line.Next(skipConcurrent: true).offset - line.offset;
+            var kiaiToggles = FindKiaiToggles(beatmap.timingLines);
 
-                    if (gap < normalizedMsPerBeat / 2.5)
-                    {
-                        yield return new Issue(
-                            GetTemplate(_WARNING),
-                            beatmap,
-                            Timestamp.Get(line.offset)
-                        );
-                    }
-                    else if (gap < normalizedMsPerBeat / 2)
-                    {
-                        yield return new Issue(
-                            GetTemplate(_MINOR),
-                            beatmap,
-                            Timestamp.Get(line.offset)
-                        );
-                    }
+            foreach (var toggle in kiaiToggles)
+            {
+                var timing = beatmap.GetTimingLine<UninheritedLine>(toggle.offset);
+                var normalizedMsPerBeat = timing.GetNormalizedMsPerBeat();
+                double gap = toggle.Next(skipConcurrent: true).offset - toggle.offset;
+
+                if (gap <= Math.Ceiling(normalizedMsPerBeat / 2.5))
+                {
+                    yield return new Issue(
+                        GetTemplate(_WARNING),
+                        beatmap,
+                        Timestamp.Get(toggle.offset)
+                    );
+                }
+                else if (gap <= Math.Ceiling(normalizedMsPerBeat / 2))
+                {
+                    yield return new Issue(
+                        GetTemplate(_MINOR),
+                        beatmap,
+                        Timestamp.Get(toggle.offset)
+                    );
                 }
             }
+        }
+
+        private static List<TimingLine> FindKiaiToggles(List<TimingLine> timingLines)
+        {
+            List<TimingLine> kiaiToggles = new List<TimingLine>();
+
+            TimingLine previousTimingLine = null;
+
+            TimingLine previousKiaiToggle = timingLines.FirstOrDefault();
+
+            foreach (TimingLine line in timingLines)
+            {
+                if (previousTimingLine != null && previousTimingLine.kiai != line.kiai)
+                {
+                    kiaiToggles.Add(previousKiaiToggle);
+                    previousKiaiToggle = line;
+                }
+                previousTimingLine = line;
+            }
+            return kiaiToggles;
         }
     }
 }
