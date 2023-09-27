@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 using MapsetParser.objects;
@@ -13,7 +12,6 @@ using MapsetVerifierFramework.objects.metadata;
 
 using MVTaikoChecks.Utils;
 
-using static MVTaikoChecks.Global;
 using static MVTaikoChecks.Aliases.Difficulty;
 using static MVTaikoChecks.Aliases.Mode;
 using static MVTaikoChecks.Aliases.Level;
@@ -25,48 +23,51 @@ namespace MVTaikoChecks.Checks.Compose
     {
         private const string _MINOR = nameof(_MINOR);
 
-        private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[] { DIFF_KANTAN, DIFF_FUTSUU, DIFF_MUZU, DIFF_ONI, DIFF_INNER, DIFF_HELL };
-
-        public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
+        private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[]
         {
-            Author = "Hivie & Phob",
-            Category = "Compose",
-            Message = "Spinner readability",
+            DIFF_KANTAN,
+            DIFF_FUTSUU,
+            DIFF_MUZU,
+            DIFF_ONI,
+            DIFF_INNER,
+            DIFF_HELL
+        };
 
-            Difficulties = _DIFFICULTIES,
-
-            Modes = new Beatmap.Mode[]
+        public override CheckMetadata GetMetadata() =>
+            new BeatmapCheckMetadata()
             {
-                MODE_TAIKO
-            },
-
-            Documentation = new Dictionary<string, string>()
-            {
+                Author = "Hivie, Phob",
+                Category = "Compose",
+                Message = "Spinner readability",
+                Difficulties = _DIFFICULTIES,
+                Modes = new Beatmap.Mode[] { MODE_TAIKO },
+                Documentation = new Dictionary<string, string>()
                 {
-                    "Purpose",
-                    @"
+                    {
+                        "Purpose",
+                        @"
                     Pointing out spinners that may be very close to their preceding object."
-                },
-                {
-                    "Reasoning",
-                    @"
+                    },
+                    {
+                        "Reasoning",
+                        @"
                     Spinners can cause reading issues when being too close to their preceding object due to the visual overlap, especially in lower difficulties."
+                    }
                 }
-            }
-        };
+            };
 
-        public override Dictionary<string, IssueTemplate> GetTemplates() => new Dictionary<string, IssueTemplate>()
-        {
+        public override Dictionary<string, IssueTemplate> GetTemplates() =>
+            new Dictionary<string, IssueTemplate>()
             {
-                _MINOR,
-
-                new IssueTemplate(
-                    LEVEL_MINOR,
-                    "{0} Note is too close to spinner",
-                    "timestamp - ")
-                .WithCause("The note is too close to the spinner")
-            }
-        };
+                {
+                    _MINOR,
+                    new IssueTemplate(
+                        LEVEL_MINOR,
+                        "{0} Note is too close to spinner",
+                        "timestamp - "
+                    ).WithCause("The note is too close to the spinner")
+                }
+            };
 
         public override IEnumerable<Issue> GetIssues(Beatmap beatmap)
         {

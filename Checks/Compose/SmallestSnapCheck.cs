@@ -25,48 +25,49 @@ namespace MVTaikoChecks.Checks.Compose
     {
         private const string _WARNING = nameof(_WARNING);
 
-        private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[] { DIFF_KANTAN, DIFF_FUTSUU, DIFF_MUZU, DIFF_ONI };
-
-        public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
+        private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[]
         {
-            Author = "Hivie & Phob",
-            Category = "Compose",
-            Message = "Unrankable snapping",
+            DIFF_KANTAN,
+            DIFF_FUTSUU,
+            DIFF_MUZU,
+            DIFF_ONI
+        };
 
-            Difficulties = _DIFFICULTIES,
-
-            Modes = new Beatmap.Mode[]
+        public override CheckMetadata GetMetadata() =>
+            new BeatmapCheckMetadata()
             {
-                MODE_TAIKO
-            },
-
-            Documentation = new Dictionary<string, string>()
-            {
+                Author = "Hivie, Phob",
+                Category = "Compose",
+                Message = "Unrankable snapping",
+                Difficulties = _DIFFICULTIES,
+                Modes = new Beatmap.Mode[] { MODE_TAIKO },
+                Documentation = new Dictionary<string, string>()
                 {
-                    "Purpose",
-                    @"
+                    {
+                        "Purpose",
+                        @"
                     Preventing patterns with abnormally small snaps based on each difficulty's Ranking Criteria."
-                },
-                {
-                    "Reasoning",
-                    @"
+                    },
+                    {
+                        "Reasoning",
+                        @"
                     Certain snaps are too difficult/unreasonable for certain difficulties."
+                    }
                 }
-            }
-        };
+            };
 
-        public override Dictionary<string, IssueTemplate> GetTemplates() => new Dictionary<string, IssueTemplate>()
-        {
+        public override Dictionary<string, IssueTemplate> GetTemplates() =>
+            new Dictionary<string, IssueTemplate>()
             {
-                _WARNING,
-
-                new IssueTemplate(
-                    LEVEL_WARNING,
-                    "{0} abnormally small gap, ensure it makes sense",
-                    "timestamp - ")
-                .WithCause("Gap between notes may be too small")
-            }
-        };
+                {
+                    _WARNING,
+                    new IssueTemplate(
+                        LEVEL_WARNING,
+                        "{0} abnormally small gap, ensure it makes sense",
+                        "timestamp - "
+                    ).WithCause("Gap between notes may be too small")
+                }
+            };
 
         public override IEnumerable<Issue> GetIssues(Beatmap beatmap)
         {
@@ -102,7 +103,15 @@ namespace MVTaikoChecks.Checks.Compose
 
                 foreach (var diff in _DIFFICULTIES)
                 {
-                    CheckAndHandleIssues(diff, minimalGap, violatingGroup, violatingGroupEnded, current, next, gap);
+                    CheckAndHandleIssues(
+                        diff,
+                        minimalGap,
+                        violatingGroup,
+                        violatingGroupEnded,
+                        current,
+                        next,
+                        gap
+                    );
 
                     if (violatingGroupEnded[diff])
                     {
@@ -125,7 +134,8 @@ namespace MVTaikoChecks.Checks.Compose
             Dictionary<Beatmap.Difficulty, bool> violatingGroupEnded,
             HitObject current,
             HitObject next,
-            double gap)
+            double gap
+        )
         {
             if (gap < minimalGap[diff])
             {

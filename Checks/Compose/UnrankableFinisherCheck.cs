@@ -21,62 +21,64 @@ namespace MVTaikoChecks.Checks.Compose
         private const string _WARNING = nameof(_WARNING);
         private const string _PROBLEM = nameof(_PROBLEM);
 
-        private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[] { DIFF_KANTAN, DIFF_FUTSUU, DIFF_MUZU, DIFF_ONI, DIFF_INNER, DIFF_HELL };
-
-        public override CheckMetadata GetMetadata() => new BeatmapCheckMetadata()
+        private readonly Beatmap.Difficulty[] _DIFFICULTIES = new Beatmap.Difficulty[]
         {
-            Author = "Hivie",
-            Category = "Compose",
-            Message = "Unrankable finishers",
+            DIFF_KANTAN,
+            DIFF_FUTSUU,
+            DIFF_MUZU,
+            DIFF_ONI,
+            DIFF_INNER,
+            DIFF_HELL
+        };
 
-            Difficulties = _DIFFICULTIES,
-
-            Modes = new Beatmap.Mode[]
+        public override CheckMetadata GetMetadata() =>
+            new BeatmapCheckMetadata()
             {
-                MODE_TAIKO
-            },
-
-            Documentation = new Dictionary<string, string>()
-            {
+                Author = "Hivie",
+                Category = "Compose",
+                Message = "Unrankable finishers",
+                Difficulties = _DIFFICULTIES,
+                Modes = new Beatmap.Mode[] { MODE_TAIKO },
+                Documentation = new Dictionary<string, string>()
                 {
-                    "Purpose",
-                    @"
+                    {
+                        "Purpose",
+                        @"
                     Ensuring that finishers abide by each difficulty's Ranking Criteria."
-                },
-                {
-                    "Reasoning",
-                    @"
+                    },
+                    {
+                        "Reasoning",
+                        @"
                     Improper finisher usage can lead to significant gamplay issues."
+                    },
+                    {
+                        "Note",
+                        @"
+                    This check works well with Kantan, Futsuu, and Muzukashii difficulties. It's inconsistent with Oni and doesn't really work with Inner Oni difficulties, this will be fixed later."
+                    }
+                }
+            };
+
+        public override Dictionary<string, IssueTemplate> GetTemplates() =>
+            new Dictionary<string, IssueTemplate>()
+            {
+                {
+                    _WARNING,
+                    new IssueTemplate(
+                        LEVEL_WARNING,
+                        "{0} Abnormal finisher, ensure this makes sense",
+                        "timestamp - "
+                    ).WithCause("Finisher is potentially violating the Ranking Criteria")
                 },
                 {
-                    "Note",
-                    @"
-                    This check works well with Kantan, Futsuu, and Muzukashii difficulties. It's inconsistent with Oni and doesn't really work with Inner Oni difficulties, this will be fixed later."
+                    _PROBLEM,
+                    new IssueTemplate(
+                        LEVEL_PROBLEM,
+                        "{0} Unrankable finisher",
+                        "timestamp - "
+                    ).WithCause("Finisher is violating the Ranking Criteria")
                 }
-            }
-        };
-
-        public override Dictionary<string, IssueTemplate> GetTemplates() => new Dictionary<string, IssueTemplate>()
-        {
-            {
-                _WARNING,
-
-                new IssueTemplate(
-                    LEVEL_WARNING,
-                    "{0} Abnormal finisher, ensure this makes sense",
-                    "timestamp - ")
-                .WithCause("Finisher is potentially violating the Ranking Criteria")
-            },
-            {
-                _PROBLEM,
-
-                new IssueTemplate(
-                    LEVEL_PROBLEM,
-                    "{0} Unrankable finisher",
-                    "timestamp - ")
-                .WithCause("Finisher is violating the Ranking Criteria")
-            }
-        };
+            };
 
         public override IEnumerable<Issue> GetIssues(Beatmap beatmap)
         {
@@ -108,7 +110,10 @@ namespace MVTaikoChecks.Checks.Compose
                 };
 
                 var nextGap = (next?.time ?? double.MaxValue) - current.time;
-                var previousGap = i == 0 ? normalizedMsPerBeat : current.time - (previous?.time ?? double.MaxValue);
+                var previousGap =
+                    i == 0
+                        ? normalizedMsPerBeat
+                        : current.time - (previous?.time ?? double.MaxValue);
 
                 // for each diff: bool violatingGroupEnded = false;
                 var violatingGroupEnded = new Dictionary<Beatmap.Difficulty, bool>();
@@ -116,12 +121,24 @@ namespace MVTaikoChecks.Checks.Compose
 
                 foreach (var diff in _DIFFICULTIES)
                 {
-                    CheckAndHandleIssues(diff, minimalGap, violatingGroup, violatingGroupEnded, current, nextGap, previousGap);
+                    CheckAndHandleIssues(
+                        diff,
+                        minimalGap,
+                        violatingGroup,
+                        violatingGroupEnded,
+                        current,
+                        nextGap,
+                        previousGap
+                    );
 
                     if (violatingGroupEnded[diff])
                     {
-                        if (diff == DIFF_KANTAN || diff == DIFF_FUTSUU || diff == DIFF_MUZU ||
-                            (diff == DIFF_ONI && nextGap < minimalGap[DIFF_ONI]))
+                        if (
+                            diff == DIFF_KANTAN
+                            || diff == DIFF_FUTSUU
+                            || diff == DIFF_MUZU
+                            || (diff == DIFF_ONI && nextGap < minimalGap[DIFF_ONI])
+                        )
                         {
                             yield return new Issue(
                                 GetTemplate(_PROBLEM),
@@ -136,9 +153,9 @@ namespace MVTaikoChecks.Checks.Compose
                             if (nextGap < minimalGap[diff])
                             {
                                 yield return new Issue(
-                                GetTemplate(_WARNING),
-                                beatmap,
-                                Timestamp.Get(violatingGroup[diff].ToArray())
+                                    GetTemplate(_WARNING),
+                                    beatmap,
+                                    Timestamp.Get(violatingGroup[diff].ToArray())
                                 ).ForDifficulties(diff);
 
                                 violatingGroup[diff].Clear();
@@ -156,7 +173,8 @@ namespace MVTaikoChecks.Checks.Compose
             Dictionary<Beatmap.Difficulty, bool> violatingGroupEnded,
             HitObject current,
             double nextGap,
-            double previousGap)
+            double previousGap
+        )
         {
             if (current.HasHitSound(HitObject.HitSound.Finish))
             {
