@@ -43,12 +43,91 @@ namespace MVTaikoChecks.Checks.Settings
                     {
                         "Purpose",
                         @"
-                    Preventing difficulties from going beyond or below the recommended OD/HP values present in the ranking criteria."
+                        Preventing difficulties from going beyond or below the
+                        recommended OD/HP values present in the ranking criteria.
+                        "
                     },
                     {
                         "Reasoning",
                         @"
-                    OD/HP values that are too high or low can cause gameplay imbalances."
+                        OD/HP values that are too high or low can cause gameplay imbalances.
+                        <note>
+                            The recommended settings below are based on the current ranking criteria with
+                            adjustments based on mapping standards and drain time, 
+                            so make sure you apply your own judgment as well.
+                        </note>
+
+                        <style type='text/css' scoped>
+                            table, th, td {
+                                border: 1px solid;
+                                border-collapse: collapse;
+                                padding: 5px;
+                            }
+                        </style>
+
+                        <h3>Recommended OD settings</h3>
+                        <table>
+                            <tr>
+                                <th>Difficulty</th>
+                                <th>Value</th>
+                            </tr>
+                            <tr>
+                                <td>Kantan OD</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>Futsuu OD</td>
+                                <td>4</td>
+                            </tr>
+                            <tr>
+                                <td>Muzukashii OD</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td>Oni OD</td>
+                                <td>5.5</td>
+                            </tr>
+                        </table>
+                        
+                        <h3>Recommended HP settings</h3>
+                        <table>
+                            <tr>
+                                <th>Difficulty</th>
+                                <th>Drain <= 1:00</th>
+                                <th>1:00 < Drain < 3:45</th>
+                                <th>3:45 <= Drain < 4:45</th>
+                                <th>Drain >= 4:45</th>
+                            </tr>
+                            <tr>
+                                <td>Kantan HP</td>
+                                <td>9~10</td>
+                                <td>8~9</td>
+                                <td>7~8</td>
+                                <td>6~7</td>
+                            </tr>
+                            <tr>
+                                <td>Futsuu HP</td>
+                                <td>8~9</td>
+                                <td>7~8</td>
+                                <td>6~7</td>
+                                <td>5~6</td>
+                            </tr>
+                            <tr>
+                                <td>Muzukashii HP</td>
+                                <td>7~8</td>
+                                <td>6~7</td>
+                                <td>5~6</td>
+                                <td>4~5</td>
+                            </tr>
+                            <tr>
+                                <td>Oni HP</td>
+                                <td>7~8</td>
+                                <td>5.5~6.5</td>
+                                <td>5~6</td>
+                                <td>4~5</td>
+                            </tr>
+                        </table>
+                        "
                     }
                 }
             };
