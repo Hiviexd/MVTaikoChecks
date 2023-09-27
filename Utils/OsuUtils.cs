@@ -2,6 +2,8 @@
 using MapsetParser.objects.timinglines;
 using System;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace MVTaikoChecks.Utils
 {
@@ -39,6 +41,26 @@ namespace MVTaikoChecks.Utils
             if (drain >= (3 * 60 * 1000) + (45 * 1000)) // 3:45 or more gets a HP nerf by 1
                 return Math.Ceiling(hp - 1);
             return hp;
+        }
+
+        public static List<TimingLine> FindKiaiToggles(this List<TimingLine> timingLines)
+        {
+            List<TimingLine> kiaiToggles = new List<TimingLine>();
+
+            TimingLine previousTimingLine = null;
+
+            TimingLine previousKiaiToggle = timingLines.FirstOrDefault();
+
+            foreach (TimingLine line in timingLines)
+            {
+                if (previousTimingLine != null && previousTimingLine.kiai != line.kiai)
+                {
+                    kiaiToggles.Add(previousKiaiToggle);
+                    previousKiaiToggle = line;
+                }
+                previousTimingLine = line;
+            }
+            return kiaiToggles;
         }
     }
 }

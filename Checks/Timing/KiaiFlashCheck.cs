@@ -64,7 +64,7 @@ namespace MVTaikoChecks.Checks.Timing
 
         public override IEnumerable<Issue> GetIssues(Beatmap beatmap)
         {
-            var kiaiToggles = FindKiaiToggles(beatmap.timingLines);
+            var kiaiToggles = beatmap.timingLines.FindKiaiToggles();
 
             foreach (var toggle in kiaiToggles)
             {
@@ -89,26 +89,6 @@ namespace MVTaikoChecks.Checks.Timing
                     );
                 }
             }
-        }
-
-        private static List<TimingLine> FindKiaiToggles(List<TimingLine> timingLines)
-        {
-            List<TimingLine> kiaiToggles = new List<TimingLine>();
-
-            TimingLine previousTimingLine = null;
-
-            TimingLine previousKiaiToggle = timingLines.FirstOrDefault();
-
-            foreach (TimingLine line in timingLines)
-            {
-                if (previousTimingLine != null && previousTimingLine.kiai != line.kiai)
-                {
-                    kiaiToggles.Add(previousKiaiToggle);
-                    previousKiaiToggle = line;
-                }
-                previousTimingLine = line;
-            }
-            return kiaiToggles;
         }
     }
 }
