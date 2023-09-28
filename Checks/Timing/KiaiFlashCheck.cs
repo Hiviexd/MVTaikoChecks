@@ -68,25 +68,31 @@ namespace MVTaikoChecks.Checks.Timing
 
             foreach (var toggle in kiaiToggles)
             {
-                var timing = beatmap.GetTimingLine<UninheritedLine>(toggle.offset);
-                var normalizedMsPerBeat = timing.GetNormalizedMsPerBeat();
-                double gap = toggle.Next(skipConcurrent: true).offset - toggle.offset;
+                int currentIndex = kiaiToggles.IndexOf(toggle);
+                int nextIndex = currentIndex + 1;
 
-                if (gap <= Math.Ceiling(normalizedMsPerBeat / 2.5))
+                if (nextIndex < kiaiToggles.Count)
                 {
-                    yield return new Issue(
-                        GetTemplate(_WARNING),
-                        beatmap,
-                        Timestamp.Get(toggle.offset)
-                    );
-                }
-                else if (gap <= Math.Ceiling(normalizedMsPerBeat / 2))
-                {
-                    yield return new Issue(
-                        GetTemplate(_MINOR),
-                        beatmap,
-                        Timestamp.Get(toggle.offset)
-                    );
+                    var timing = beatmap.GetTimingLine<UninheritedLine>(toggle.offset);
+                    var normalizedMsPerBeat = timing.GetNormalizedMsPerBeat();
+                    double gap = kiaiToggles.SafeGetIndex(currentIndex + 1).offset - toggle.offset;
+
+                    if (gap <= Math.Ceiling(normalizedMsPerBeat / 2.5))
+                    {
+                        yield return new Issue(
+                            GetTemplate(_WARNING),
+                            beatmap,
+                            Timestamp.Get(toggle.offset)
+                        );
+                    }
+                    else if (gap <= Math.Ceiling(normalizedMsPerBeat / 2))
+                    {
+                        yield return new Issue(
+                            GetTemplate(_MINOR),
+                            beatmap,
+                            Timestamp.Get(toggle.offset)
+                        );
+                    }
                 }
             }
         }
