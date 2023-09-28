@@ -49,14 +49,11 @@ namespace MVTaikoChecks.Utils
 
             TimingLine previousTimingLine = null;
 
-            TimingLine previousKiaiToggle = timingLines.FirstOrDefault();
-
             foreach (TimingLine line in timingLines)
             {
-                if (previousTimingLine != null && previousTimingLine.kiai != line.kiai)
+                if ((previousTimingLine == null && line.kiai) || (previousTimingLine != null && previousTimingLine.kiai != line.kiai))
                 {
-                    kiaiToggles.Add(previousKiaiToggle);
-                    previousKiaiToggle = line;
+                    kiaiToggles.Add(line);
                 }
                 previousTimingLine = line;
             }
