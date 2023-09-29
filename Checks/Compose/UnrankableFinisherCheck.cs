@@ -8,12 +8,12 @@ using MapsetVerifierFramework.objects.metadata;
 using MVTaikoChecks.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using static MVTaikoChecks.Global;
 using static MVTaikoChecks.Aliases.Difficulty;
 using static MVTaikoChecks.Aliases.Level;
 using static MVTaikoChecks.Aliases.Mode;
 
 namespace MVTaikoChecks.Checks.Compose
-#warning: TODO: improve error detection in oni and inner + implement finisher and preceding note same color detection
 {
     [Check]
     public class UnrankableFinisherCheck : BeatmapCheck
@@ -34,7 +34,7 @@ namespace MVTaikoChecks.Checks.Compose
         public override CheckMetadata GetMetadata() =>
             new BeatmapCheckMetadata()
             {
-                Author = "Hivie",
+                Author = "Hivie, Nostril",
                 Category = "Compose",
                 Message = "Unrankable finishers",
                 Difficulties = _DIFFICULTIES,
@@ -49,12 +49,7 @@ namespace MVTaikoChecks.Checks.Compose
                     {
                         "Reasoning",
                         @"
-                    Improper finisher usage can lead to significant gamplay issues."
-                    },
-                    {
-                        "Note",
-                        @"
-                    This check works well with Kantan, Futsuu, and Muzukashii difficulties. It's inconsistent with Oni and doesn't really work with Inner Oni difficulties, this will be fixed later."
+                    Improper finisher usage can lead to significant gameplay issues."
                     }
                 }
             };
@@ -82,108 +77,121 @@ namespace MVTaikoChecks.Checks.Compose
 
         public override IEnumerable<Issue> GetIssues(Beatmap beatmap)
         {
-            var circles = beatmap.hitObjects.Where(x => x is Circle).ToList();
+            var finishers = beatmap.hitObjects.Where(x => x is Circle && x.IsFinisher()).ToList();
 
-            // for each diff: var violatingGroup = new List<HitObject>();
-            // lambda is used, because bare "new List<HitObject>()" would set the same instance in each pair
-            var violatingGroup = new Dictionary<Beatmap.Difficulty, List<HitObject>>();
-            violatingGroup.AddRange(_DIFFICULTIES, () => new List<HitObject>());
-
-            for (int i = 0; i < circles.Count; i++)
+            // any finisher pattern spacing equal to or smaller than this gap is a problem
+            var maximalGapBeats = new Dictionary<Beatmap.Difficulty, double>()
             {
-                var current = circles[i];
-                var next = circles.SafeGetIndex(i + 1);
-                var previous = i == 0 ? null : circles.SafeGetIndex(i - 1);
+                { DIFF_KANTAN,  1.0/2 },
+                { DIFF_FUTSUU,  1.0/3 },
+                { DIFF_MUZU,    1.0/4 },
+                { DIFF_ONI,     1.0/6 }
+            };
 
-                var timing = beatmap.GetTimingLine<UninheritedLine>(current.time);
-                var normalizedMsPerBeat = timing.GetNormalizedMsPerBeat();
+            // any finisher pattern spacing equal to or smaller than this gap is a problem
+            var maximalGapBeatsWarning = new Dictionary<Beatmap.Difficulty, double>()
+            {
+                { DIFF_MUZU,    1.0/3 }
+            };
 
-                // for each diff: double minimalGap = ?;
-                var minimalGap = new Dictionary<Beatmap.Difficulty, double>()
+            // any finisher pattern spacing equal to or smaller than this gap without a color change before is a problem
+            var maximalGapBeatsRequiringColorChangeBefore = new Dictionary<Beatmap.Difficulty, double>()
+            {
+                { DIFF_ONI,     1.0/4 }
+            };
+
+            // any finisher pattern spacing equal to or smaller than this gap without a color change after is a problem
+            var maximalGapBeatsRequiringColorChangeAfter = new Dictionary<Beatmap.Difficulty, double>() { };
+
+            // any finisher pattern spacing equal to or smaller than this gap without a color change before is a warning
+            var maximalGapBeatsRequiringColorChangeBeforeWarning = new Dictionary<Beatmap.Difficulty, double>()
+            {
+                { DIFF_INNER,   1.0/3 },
+                { DIFF_HELL,    1.0/3 }
+            };
+
+            // any finisher pattern spacing equal to or smaller than this gap without a color change after is a warning
+            var maximalGapBeatsRequiringColorChangeAfterWarning = new Dictionary<Beatmap.Difficulty, double>()
+            {
+                { DIFF_INNER,   1.0/3 },
+                { DIFF_HELL,    1.0/3 }
+            };
+
+            // any finisher pattern spacing equal to or smaller than this gap while not being at the end of the pattern is a problem
+            var maximalGapBeatsRequiringFinalNote = new Dictionary<Beatmap.Difficulty, double>()
+            {
+                { DIFF_ONI,     1.0/4 }
+            };
+
+            // any finisher pattern spacing equal to or smaller than this gap while not being at the end of the pattern is a warning
+            var maximalGapBeatsRequiringFinalNoteWarning = new Dictionary<Beatmap.Difficulty, double>()
+            {
+                { DIFF_INNER,   1.0/3 },
+                { DIFF_HELL,    1.0/3 }
+            };
+
+            foreach (var diff in _DIFFICULTIES)
+            {
+                foreach (var current in finishers)
                 {
-                    { DIFF_KANTAN, normalizedMsPerBeat / 2 },
-                    { DIFF_FUTSUU, normalizedMsPerBeat / 3 },
-                    { DIFF_MUZU, normalizedMsPerBeat / 3 },
-                    { DIFF_ONI, normalizedMsPerBeat / 4 },
-                    { DIFF_INNER, normalizedMsPerBeat / 4 },
-                    { DIFF_HELL, normalizedMsPerBeat / 4 },
-                };
+                    var sameColorBefore = current.IsMono();
+                    var sameColorAfter = current.Next()?.IsMono() ?? false;
+                    var isInPattern = !current.IsNotInPattern();
+                    var isFirstNote = current.IsAtBeginningOfPattern();
+                    var isFinalNote = current.IsAtEndOfPattern();
 
-                var nextGap = (next?.time ?? double.MaxValue) - current.time;
-                var previousGap =
-                    i == 0
-                        ? normalizedMsPerBeat
-                        : current.time - (previous?.time ?? double.MaxValue);
+                    // check for unrankable finishers (problem)
+                    if ((checkGap(diff, maximalGapBeats, beatmap, current) && isInPattern) ||
+                        (checkGap(diff, maximalGapBeatsRequiringColorChangeBefore, beatmap, current) && sameColorBefore && !isFirstNote) ||
+                        (checkGap(diff, maximalGapBeatsRequiringColorChangeAfter, beatmap, current) && sameColorAfter && !isFinalNote) ||
+                        (checkGap(diff, maximalGapBeatsRequiringFinalNote, beatmap, current) && !isFinalNote)) {
+                        yield return new Issue(
+                            GetTemplate(_PROBLEM),
+                            beatmap,
+                            Timestamp.Get(current.time)
+                        ).ForDifficulties(diff);
+                        continue;
+                    }
 
-                // for each diff: bool violatingGroupEnded = false;
-                var violatingGroupEnded = new Dictionary<Beatmap.Difficulty, bool>();
-                violatingGroupEnded.AddRange(_DIFFICULTIES, false);
-
-                foreach (var diff in _DIFFICULTIES)
-                {
-                    CheckAndHandleIssues(
-                        diff,
-                        minimalGap,
-                        violatingGroup,
-                        violatingGroupEnded,
-                        current,
-                        nextGap,
-                        previousGap
-                    );
-
-                    if (violatingGroupEnded[diff])
-                    {
-                        if (
-                            diff == DIFF_KANTAN
-                            || diff == DIFF_FUTSUU
-                            || diff == DIFF_MUZU
-                            || (diff == DIFF_ONI && nextGap < minimalGap[DIFF_ONI])
-                        )
-                        {
-                            yield return new Issue(
-                                GetTemplate(_PROBLEM),
-                                beatmap,
-                                Timestamp.Get(violatingGroup[diff].ToArray())
-                            ).ForDifficulties(diff);
-
-                            violatingGroup[diff].Clear();
-                        }
-                        else if (diff == DIFF_INNER || diff == DIFF_HELL)
-                        {
-                            if (nextGap < minimalGap[diff])
-                            {
-                                yield return new Issue(
-                                    GetTemplate(_WARNING),
-                                    beatmap,
-                                    Timestamp.Get(violatingGroup[diff].ToArray())
-                                ).ForDifficulties(diff);
-
-                                violatingGroup[diff].Clear();
-                            }
-                        }
+                    // check for abnormal finishers (warning)
+                    if ((checkGap(diff, maximalGapBeatsWarning, beatmap, current) && isInPattern) ||
+                        (checkGap(diff, maximalGapBeatsRequiringColorChangeBeforeWarning, beatmap, current) && sameColorBefore && !isFirstNote) ||
+                        (checkGap(diff, maximalGapBeatsRequiringColorChangeAfterWarning, beatmap, current) && sameColorAfter && !isFinalNote) ||
+                        (checkGap(diff, maximalGapBeatsRequiringFinalNoteWarning, beatmap, current) && !isFinalNote)) {
+                        yield return new Issue(
+                            GetTemplate(_WARNING),
+                            beatmap,
+                            Timestamp.Get(current.time)
+                        ).ForDifficulties(diff);
+                        continue;
                     }
                 }
             }
+            yield break;
         }
 
-        private static void CheckAndHandleIssues(
+        private bool checkGap(
             Beatmap.Difficulty diff,
-            Dictionary<Beatmap.Difficulty, double> minimalGap,
-            Dictionary<Beatmap.Difficulty, List<HitObject>> violatingGroup,
-            Dictionary<Beatmap.Difficulty, bool> violatingGroupEnded,
-            HitObject current,
-            double nextGap,
-            double previousGap
-        )
+            Dictionary<Beatmap.Difficulty, double> maximalGapBeats,
+            Beatmap beatmap,
+            HitObject current)
         {
-            if (current.HasHitSound(HitObject.HitSound.Finish))
+            // if check isn't relevant to this diff, don't check it
+            if (!maximalGapBeats.ContainsKey(diff))
             {
-                if (nextGap < minimalGap[diff] || previousGap < minimalGap[diff])
-                {
-                    violatingGroup[diff].Add(current);
-                    violatingGroupEnded[diff] = true;
-                }
+                return false;
             }
+
+            // convert maximal gap from # beats to milliseconds
+            var timing = beatmap.GetTimingLine<UninheritedLine>(current.time);
+            var maximalGapMs = maximalGapBeats[diff] * timing.GetNormalizedMsPerBeat();
+
+            if (current.GetPatternSpacingMs() <= maximalGapMs + MS_EPSILON)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
