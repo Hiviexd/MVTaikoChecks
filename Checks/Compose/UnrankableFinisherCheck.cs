@@ -89,7 +89,10 @@ namespace MVTaikoChecks.Checks.Compose
             };
 
             // any finisher pattern spacing equal to or smaller than this gap is a problem
-            var maximalGapBeatsWarning = new Dictionary<Beatmap.Difficulty, double>() { };
+            var maximalGapBeatsWarning = new Dictionary<Beatmap.Difficulty, double>()
+            {
+                { DIFF_MUZU,    1.0/3 }
+            };
 
             // any finisher pattern spacing equal to or smaller than this gap without a color change before is a problem
             var maximalGapBeatsRequiringColorChangeBefore = new Dictionary<Beatmap.Difficulty, double>()
