@@ -8,11 +8,20 @@ namespace MVTaikoChecks.Utils
     {
         public static bool IsDon(this HitObject hitObject)
         {
+            if (!(hitObject is Circle))
+            {
+                return false;
+            }
             return !hitObject.HasHitSound(HitObject.HitSound.Whistle) && !hitObject.HasHitSound(HitObject.HitSound.Clap);
         }
         public static bool IsFinisher(this HitObject hitObject)
         {
             return hitObject.HasHitSound(HitObject.HitSound.Finish);
+        }
+
+        public static bool IsMono(this HitObject hitObject)
+        {
+            return (hitObject.Prev()?.IsDon() ?? null) == hitObject.IsDon();
         }
 
         public static bool IsAtBeginningOfPattern(this HitObject current)

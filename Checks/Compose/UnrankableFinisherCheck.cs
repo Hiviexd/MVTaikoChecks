@@ -131,17 +131,17 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 foreach (var current in finishers)
                 {
-                    var sameColorBefore = (current.Prev()?.IsDon() ?? null) == current.IsDon();
-                    var sameColorAfter = (current.Next()?.IsDon() ?? null) == current.IsDon();
+                    var sameColorBefore = current.IsMono();
+                    var sameColorAfter = current.Next()?.IsMono() ?? false;
                     var isInPattern = !current.IsNotInPattern();
                     var isFirstNote = current.IsAtBeginningOfPattern();
                     var isFinalNote = current.IsAtEndOfPattern();
 
                     // check for unrankable finishers (problem)
-                    if ((checkAndHandleIssues(diff, maximalGapBeats, beatmap, current) && isInPattern) ||
-                        (checkAndHandleIssues(diff, maximalGapBeatsRequiringColorChangeBefore, beatmap, current) && sameColorBefore && !isFirstNote) ||
-                        (checkAndHandleIssues(diff, maximalGapBeatsRequiringColorChangeAfter, beatmap, current) && sameColorAfter && !isFinalNote) ||
-                        (checkAndHandleIssues(diff, maximalGapBeatsRequiringFinalNote, beatmap, current) && !isFinalNote)) {
+                    if ((checkGap(diff, maximalGapBeats, beatmap, current) && isInPattern) ||
+                        (checkGap(diff, maximalGapBeatsRequiringColorChangeBefore, beatmap, current) && sameColorBefore && !isFirstNote) ||
+                        (checkGap(diff, maximalGapBeatsRequiringColorChangeAfter, beatmap, current) && sameColorAfter && !isFinalNote) ||
+                        (checkGap(diff, maximalGapBeatsRequiringFinalNote, beatmap, current) && !isFinalNote)) {
                         yield return new Issue(
                             GetTemplate(_PROBLEM),
                             beatmap,
@@ -151,10 +151,10 @@ namespace MVTaikoChecks.Checks.Compose
                     }
 
                     // check for abnormal finishers (warning)
-                    if ((checkAndHandleIssues(diff, maximalGapBeatsWarning, beatmap, current) && isInPattern) ||
-                        (checkAndHandleIssues(diff, maximalGapBeatsRequiringColorChangeBeforeWarning, beatmap, current) && sameColorBefore && !isFirstNote) ||
-                        (checkAndHandleIssues(diff, maximalGapBeatsRequiringColorChangeAfterWarning, beatmap, current) && sameColorAfter && !isFinalNote) ||
-                        (checkAndHandleIssues(diff, maximalGapBeatsRequiringFinalNoteWarning, beatmap, current) && !isFinalNote)) {
+                    if ((checkGap(diff, maximalGapBeatsWarning, beatmap, current) && isInPattern) ||
+                        (checkGap(diff, maximalGapBeatsRequiringColorChangeBeforeWarning, beatmap, current) && sameColorBefore && !isFirstNote) ||
+                        (checkGap(diff, maximalGapBeatsRequiringColorChangeAfterWarning, beatmap, current) && sameColorAfter && !isFinalNote) ||
+                        (checkGap(diff, maximalGapBeatsRequiringFinalNoteWarning, beatmap, current) && !isFinalNote)) {
                         yield return new Issue(
                             GetTemplate(_WARNING),
                             beatmap,
@@ -167,7 +167,7 @@ namespace MVTaikoChecks.Checks.Compose
             yield break;
         }
 
-        private bool checkAndHandleIssues(
+        private bool checkGap(
             Beatmap.Difficulty diff,
             Dictionary<Beatmap.Difficulty, double> maximalGapBeats,
             Beatmap beatmap,
