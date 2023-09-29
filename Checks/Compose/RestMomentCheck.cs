@@ -223,7 +223,7 @@ namespace MVTaikoChecks.Checks.Compose
                                 GetTemplate(_WARNING),
                                 beatmap,
                                 Timestamp.Get(currentContinuousSectionStartTimeMs).Trim() + ">",
-                                Timestamp.Get(current.time),
+                                Timestamp.Get(current.GetEndTime()),
                                 breakTypes[diff],
                                 $"{beatsWithoutBreaks}/1"
                             ).ForDifficulties(diff);
@@ -234,7 +234,7 @@ namespace MVTaikoChecks.Checks.Compose
                                 GetTemplate(_MINOR),
                                 beatmap,
                                 Timestamp.Get(currentContinuousSectionStartTimeMs).Trim() + ">",
-                                Timestamp.Get(current.time),
+                                Timestamp.Get(current.GetEndTime()),
                                 breakTypes[diff],
                                 $"{beatsWithoutBreaks}/1"
                             ).ForDifficulties(diff);
