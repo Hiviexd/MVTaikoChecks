@@ -107,14 +107,14 @@ namespace MVTaikoChecks.Checks.Compose
             var maximalGapBeatsRequiringColorChangeBeforeWarning = new Dictionary<Beatmap.Difficulty, double>()
             {
                 { DIFF_INNER,   1.0/3 },
-                { DIFF_HELL,   1.0/3 }
+                { DIFF_HELL,    1.0/3 }
             };
 
             // any finisher pattern spacing equal to or smaller than this gap without a color change after is a warning
             var maximalGapBeatsRequiringColorChangeAfterWarning = new Dictionary<Beatmap.Difficulty, double>()
             {
                 { DIFF_INNER,   1.0/3 },
-                { DIFF_HELL,   1.0/3 }
+                { DIFF_HELL,    1.0/3 }
             };
 
             // any finisher pattern spacing equal to or smaller than this gap while not being at the end of the pattern is a problem
@@ -127,7 +127,7 @@ namespace MVTaikoChecks.Checks.Compose
             var maximalGapBeatsRequiringFinalNoteWarning = new Dictionary<Beatmap.Difficulty, double>()
             {
                 { DIFF_INNER,   1.0/3 },
-                { DIFF_HELL,   1.0/3 }
+                { DIFF_HELL,    1.0/3 }
             };
 
             foreach (var diff in _DIFFICULTIES)
