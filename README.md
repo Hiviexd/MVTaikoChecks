@@ -3,7 +3,7 @@
 A set of osu!taiko specific [Mapset Verifier](https://github.com/Naxesss/MapsetVerifier) checks
 
 > **Warning**
-> This plugin is still in heavy development, so [false positives and false negatives](https://en.wikipedia.org/wiki/False_positives_and_false_negatives) may occur. If you found something that isn't right, please refer to the *[Feature requests & bug reports](#feature-requests--bug-reports)* section.
+> This plugin is still in heavy development, so [false positives and false negatives](https://en.wikipedia.org/wiki/False_positives_and_false_negatives) may occur. If you find something that isn't right, please refer to the *[Feature requests & bug reports](#feature-requests--bug-reports)* section.
 > **ALWAYS APPLY YOUR OWN JUDGEMENT ON EVERY CHECK AND DON'T BLINDLY FOLLOW THEM.**
 
 ## Features
@@ -19,22 +19,22 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 | 130 < BPM < 270 | effective BPM is unchanged |
 | BPM >= 270 | effective BPM is divided by 2 |
 
-### Unrankable checks
+> **Important**
+> This unfortunately **does not** work on double/half BPM-style maps that don't change the actual BPM value, so it will cause false positives.
+
+### Available checks
 
 - Double barlines
 - Rest moments
 - Unrankable finishers[^note-unstable]
 - Abnormal note gaps
-
-### Minor checks
-
 - Spinner gap
-
-## Planned checks
-
-- Extreme SV changes in lower difficulties
+- OD/HP settings
 - Kiai flashes
-- Finisher consistency(?)
+
+### Planned checks
+
+- Extreme SV changes/SV jumps in lower difficulties
 
 ## Installing
 
@@ -55,6 +55,7 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 If you have any feature requests or an issue to report, please open an issue or reach out to one of the active maintainers below:
 
 - **Hivie** (osu!: [Hivie](https://osu.ppy.sh/users/14102976) | Discord: `hivie`)
+- **Nostril** (osu!: [Nostril](https://osu.ppy.sh/users/11479122) | Discord: `nostril`)
 
 ## Contributing
 
