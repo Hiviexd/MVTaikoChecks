@@ -181,7 +181,7 @@ namespace MVTaikoChecks.Checks.Compose
 
             // convert maximal gap from # beats to milliseconds
             var timing = beatmap.GetTimingLine<UninheritedLine>(current.time);
-            var maximalGapMs = maximalGapBeats[diff] * timing.msPerBeat;
+            var maximalGapMs = maximalGapBeats[diff] * timing.GetNormalizedMsPerBeat();
 
             if (current.GetPatternSpacingMs() <= maximalGapMs + MS_EPSILON)
             {
