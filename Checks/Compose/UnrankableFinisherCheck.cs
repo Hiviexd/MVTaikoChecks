@@ -141,8 +141,8 @@ namespace MVTaikoChecks.Checks.Compose
 
                     // check for unrankable finishers (problem)
                     if ((checkAndHandleIssues(diff, maximalGapBeats, beatmap, current)) ||
-                        (checkAndHandleIssues(diff, maximalGapBeatsRequiringColorChangeBefore, beatmap, current) && sameColorBefore) ||
-                        (checkAndHandleIssues(diff, maximalGapBeatsRequiringColorChangeAfter, beatmap, current) && sameColorAfter) ||
+                        (checkAndHandleIssues(diff, maximalGapBeatsRequiringColorChangeBefore, beatmap, current) && sameColorBefore && !isFirstNote) ||
+                        (checkAndHandleIssues(diff, maximalGapBeatsRequiringColorChangeAfter, beatmap, current) && sameColorAfter && !isFinalNote) ||
                         (checkAndHandleIssues(diff, maximalGapBeatsRequiringFinalNote, beatmap, current) && !isFinalNote)) {
                         yield return new Issue(
                             GetTemplate(_PROBLEM),
