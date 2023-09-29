@@ -133,11 +133,12 @@ namespace MVTaikoChecks.Checks.Compose
                 {
                     var sameColorBefore = (current.Prev()?.IsDon() ?? null) == current.IsDon();
                     var sameColorAfter = (current.Next()?.IsDon() ?? null) == current.IsDon();
+                    var isInPattern = !current.IsNotInPattern();
                     var isFirstNote = current.IsAtBeginningOfPattern();
                     var isFinalNote = current.IsAtEndOfPattern();
 
                     // check for unrankable finishers (problem)
-                    if ((checkAndHandleIssues(diff, maximalGapBeats, beatmap, current)) ||
+                    if ((checkAndHandleIssues(diff, maximalGapBeats, beatmap, current) && isInPattern) ||
                         (checkAndHandleIssues(diff, maximalGapBeatsRequiringColorChangeBefore, beatmap, current) && sameColorBefore && !isFirstNote) ||
                         (checkAndHandleIssues(diff, maximalGapBeatsRequiringColorChangeAfter, beatmap, current) && sameColorAfter && !isFinalNote) ||
                         (checkAndHandleIssues(diff, maximalGapBeatsRequiringFinalNote, beatmap, current) && !isFinalNote)) {
@@ -150,7 +151,7 @@ namespace MVTaikoChecks.Checks.Compose
                     }
 
                     // check for abnormal finishers (warning)
-                    if ((checkAndHandleIssues(diff, maximalGapBeatsWarning, beatmap, current)) ||
+                    if ((checkAndHandleIssues(diff, maximalGapBeatsWarning, beatmap, current) && isInPattern) ||
                         (checkAndHandleIssues(diff, maximalGapBeatsRequiringColorChangeBeforeWarning, beatmap, current) && sameColorBefore && !isFirstNote) ||
                         (checkAndHandleIssues(diff, maximalGapBeatsRequiringColorChangeAfterWarning, beatmap, current) && sameColorAfter && !isFinalNote) ||
                         (checkAndHandleIssues(diff, maximalGapBeatsRequiringFinalNoteWarning, beatmap, current) && !isFinalNote)) {
