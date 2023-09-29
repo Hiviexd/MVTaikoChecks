@@ -34,7 +34,7 @@ namespace MVTaikoChecks.Checks.Compose
         public override CheckMetadata GetMetadata() =>
             new BeatmapCheckMetadata()
             {
-                Author = "Hivie & Nostril",
+                Author = "Hivie, Nostril",
                 Category = "Compose",
                 Message = "Unrankable finishers",
                 Difficulties = _DIFFICULTIES,
