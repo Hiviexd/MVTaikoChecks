@@ -204,7 +204,7 @@ namespace MVTaikoChecks.Checks.Compose
                         isWithinContinuousMapping = false;
                         var continuouslyMappedDurationMs = current.GetEndTime() - currentContinuousSectionStartTimeMs;
 
-                        double beatsWithoutBreaks = Math.Floor((continuouslyMappedDurationMs + MS_EPSILON) / normalizedMsPerBeat);
+                        double beatsWithoutBreaks = Math.Floor((continuouslyMappedDurationMs + MS_EPSILON) / timing.msPerBeat);
 
                         if (beatsWithoutBreaks > 0 && _DEBUG_SEE_ALL_CONTINUOUS_MAPPING)
                         {
