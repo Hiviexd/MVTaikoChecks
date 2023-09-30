@@ -26,7 +26,7 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 
 - Double barlines
 - Rest moments
-- Unrankable finishers[^note-unstable]
+- Unrankable finishers
 - Abnormal note gaps
 - Spinner gap
 - OD/HP settings
@@ -48,7 +48,7 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 
 ## Known issues
 
-- Difficulties with custom names are always marked as "Easy" so make sure you manually change that to the correct diff, else you'll have an insane amount of flase positives
+- Difficulties with custom names are always marked as "Easy" so make sure you manually change that to the correct diff, else you'll have an insane amount of flase positives.
 
 ## Feature requests & bug reports
 
@@ -65,6 +65,8 @@ If you're here to contribute, please open an issue to discuss your idea before y
 
 - [phob144](https://github.com/phob144) for being integral to development in early stages
 
+<!-- 
 ## Notes
 
 [^note-unstable]: This check is currently unstable and may cause false positives.
+-->
