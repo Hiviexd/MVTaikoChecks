@@ -69,12 +69,12 @@ namespace MVTaikoChecks.Checks.Compose
 
         public override IEnumerable<Issue> GetIssues(Beatmap beatmap)
         {
-            var lastObject = beatmap.hitObjects.Last();
-
-            if (lastObject == null)
+            if (beatmap.hitObjects.Count == 0)
             {
                 yield break;
             }
+
+            var lastObject = beatmap.hitObjects.Last();
 
             var unsnapFromLastBarline = lastObject.GetTailOffsetFromNextBarlineMs();
 
