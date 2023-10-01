@@ -14,7 +14,7 @@ using MVTaikoChecks.Utils;
 using static MVTaikoChecks.Aliases.Mode;
 using static MVTaikoChecks.Aliases.Level;
 
-namespace MVTaikoChecks.Checks.Compose
+namespace MVTaikoChecks.Checks.Timing
 {
     [Check]
     public class LastNoteHidingBarlineCheck : BeatmapCheck
@@ -26,7 +26,7 @@ namespace MVTaikoChecks.Checks.Compose
             new BeatmapCheckMetadata()
             {
                 Author = "Nostril",
-                Category = "Compose",
+                Category = "Timing",
                 Message = "Unsnapped last note hiding barline",
                 Modes = new Beatmap.Mode[] { MODE_TAIKO },
                 Documentation = new Dictionary<string, string>()
