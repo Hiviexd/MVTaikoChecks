@@ -31,6 +31,7 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 - Spinner gap
 - OD/HP settings
 - Kiai flashes
+- Unsnapped last note that accidentally hides its barline
 
 ### Planned checks
 
