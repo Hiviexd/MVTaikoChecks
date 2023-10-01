@@ -34,12 +34,12 @@ namespace MVTaikoChecks.Checks.Compose
                     {
                         "Purpose",
                         @"
-                    Check that the last object in the beatmap is not 1ms earlier than a barline."
+                    Check if the last object in the beatmap is not 1ms earlier than a barline."
                     },
                     {
                         "Reasoning",
                         @"
-                    This can cause the last barline in the map to not be rendered."
+                    This causes the last barline in the map to not be rendered."
                     }
                 }
             };
@@ -52,18 +52,18 @@ namespace MVTaikoChecks.Checks.Compose
 
                     new IssueTemplate(
                         LEVEL_MINOR,
-                        "{0} Last spinner or slider in the map is hiding its barline, due to being unsnapped 1ms early",
+                        "{0} Last spinner/slider end in the map is hiding its barline, due to being unsnapped 1ms early",
                         "timestamp - "
-                    ).WithCause("The spinner or slider is unsnapped 1ms early.")
+                    ).WithCause("The spinner/slider end is unsnapped 1ms early.")
                 },
                 {
                     _PROBLEM,
 
                     new IssueTemplate(
                         LEVEL_PROBLEM,
-                        "{0} Last circle in the map is hiding its barline, due to being unsnapped 1ms early",
+                        "{0} Last note in the map is hiding its barline, due to being unsnapped 1ms early",
                         "timestamp - "
-                    ).WithCause("The circle is unsnapped 1ms early.")
+                    ).WithCause("The note is unsnapped 1ms early.")
                 }
             };
 
