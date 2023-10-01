@@ -30,5 +30,15 @@ namespace MVTaikoChecks.Utils
 
         public static T SafeGetIndex<T>(this List<T> collection, int index)
             => index < collection.Count ? collection[index] : default;
+
+        public static double TakeLowerAbsValue(double first, double second)
+        {
+            return Math.Abs(first) < Math.Abs(second) ? first : second;
+        }
+
+        public static double TakeHigherAbsValue(double first, double second)
+        {
+            return Math.Abs(first) > Math.Abs(second) ? first : second;
+        }
     }
 }
