@@ -51,9 +51,8 @@ namespace MVTaikoChecks.Checks.Timing
 
                     new IssueTemplate(
                         LEVEL_MINOR,
-                        "{0} first object's offset ({1}ms) is between {2}ms and {3}ms, which may cause stuttering at the start of the map. Ignore if there are no issues.",
+                        "{0} first object's offset is between {1}ms and {2}ms, which may cause stuttering at the start of the map. Ignore if there are no issues.",
                         "timestamp -",
-                        "offset",
                         "limit",
                         "recommended"
                     ).WithCause("The object's offset is between 150ms and 200ms.")
@@ -63,9 +62,8 @@ namespace MVTaikoChecks.Checks.Timing
 
                     new IssueTemplate(
                         LEVEL_WARNING,
-                        "{0} first object's offset ({1}ms) is below {2}ms, which may cause stuttering at the start of the map (recommended: {3}ms or more)",
+                        "{0} first object's offset is below {1}ms, which may cause stuttering at the start of the map (recommended: {2}ms or more)",
                         "timestamp -",
-                        "offset",
                         "limit",
                         "recommended"
                     ).WithCause("The object's offset is below the 150ms limit.")
@@ -89,7 +87,6 @@ namespace MVTaikoChecks.Checks.Timing
                     GetTemplate(_WARNING),
                     beatmap,
                     Timestamp.Get(firstObject.time),
-                    firstObject.time,
                     limit,
                     recommended
                 );
@@ -100,7 +97,6 @@ namespace MVTaikoChecks.Checks.Timing
                     GetTemplate(_MINOR),
                     beatmap,
                     Timestamp.Get(firstObject.time),
-                    firstObject.time,
                     limit,
                     recommended
                 );
