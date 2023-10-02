@@ -39,13 +39,14 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 
 ## Installing
 
-- Download the [latest release](https://github.com/Hiviexd/MVTaikoChecks/releases/latest) of `MVTaikoChecks.dll` 
-- Click the settings icon (top right) in Mapset Verifier
-- Scroll down to the `Shortcuts` section
-- Click the `Open externals folder` icon
-- Open the `checks` folder
-- Place the `MVTaikoChecks.dll` file in this folder
-- Restart Mapset Verifier
+1. Download and install Mapset Verifier from [here](https://github.com/Naxesss/MapsetVerifier#download) if you don't have it already
+2. Download the [latest release](https://github.com/Hiviexd/MVTaikoChecks/releases/latest) of `MVTaikoChecks.dll` 
+3. Open MV and click the settings icon (top right)
+4. Scroll down to the `Shortcuts` section
+5. Click the `Open externals folder` icon
+6. Open the `checks` folder
+7. Close MV and place the `MVTaikoChecks.dll` file in the folder above
+8. Start MV again
 
 ## Known issues
 
