@@ -23,6 +23,7 @@ namespace MVTaikoChecks.Checks.Compose
     [Check]
     public class PatternLengthCheck : BeatmapSetCheck
     {
+        private const string _MINOR = nameof(_MINOR);
         private const string _WARNING = nameof(_WARNING);
         private const bool _DEBUG_SEE_ALL_PATTERN_LENGTHS = false;
 
@@ -47,25 +48,34 @@ namespace MVTaikoChecks.Checks.Compose
                     {
                         "Purpose",
                         @"
-                    Preventing small snaps from being too long based on each difficulty's Ranking Criteria."
+                    Preventing patterns from being too long based on each difficulty's Ranking Criteria."
                     },
                     {
                         "Reasoning",
                         @"
-                    Certain snaps if going on for too long are too straining for certain difficulties."
+                    On lower difficulties, patterns of smaller snaps can get too straining if they surpass a certain length."
                     }
                 }
             };
 
         public override Dictionary<string, IssueTemplate> GetTemplates() => new Dictionary<string, IssueTemplate>()
         {
+            {
+                _MINOR,
+
+                new IssueTemplate(LEVEL_MINOR,
+                    "{0} {1} {2} pattern is {3} notes long, ensure this makes sense",
+                    "start", "end", "snap", "number")
+                .WithCause("Pattern length is equal to the RC guideline")
+            },
+
 
             {
                 _WARNING,
                 new IssueTemplate(LEVEL_WARNING,
                     "{0} {1} {2} pattern is {3} notes long, ensure this makes sense",
                     "start", "end", "snap", "number")
-                .WithCause("Chain length is surpassing the RC guideline")
+                .WithCause("Pattern length is surpassing the RC guideline")
             }
         };
 
@@ -80,7 +90,7 @@ namespace MVTaikoChecks.Checks.Compose
                     { 1.0 / 2, 2 }
                 }},
                 { DIFF_FUTSUU, new Dictionary< double, int>() {
-                    { 1.0 / 2, isBottomDiffKantan(beatmapSet) ? 7 : 5 }, // If no kantan, then recommended maximum 1/2 length for futsuu is 5 instead of 7
+                    { 1.0 / 2, beatmapSet.IsBottomDiffKantan() ? 7 : 5 }, // If no kantan, then recommended maximum 1/2 length for futsuu is 5 instead of 7
                     { 1.0 / 3, 2 }
                 }},
                 { DIFF_MUZU, new Dictionary<double, int>() {
@@ -88,7 +98,8 @@ namespace MVTaikoChecks.Checks.Compose
                     { 1.0 / 6, 4 }, 
                 }},
                 { DIFF_ONI, new Dictionary<double, int>() {
-                    { 1.0 / 4, 9 }, 
+                    { 1.0 / 4, 9 },
+                    { 1.0 / 6, 4 },
                     { 1.0 / 8, 2 }, 
                 }},
             };
@@ -136,17 +147,17 @@ namespace MVTaikoChecks.Checks.Compose
                                 var gapEndObject = objects.SafeGetIndex(i + 1);
 
                                 // Check if gap is greater than the snap size
-                                var gap = gapEndObject.time - gapBeginObject.GetEndTime();
+                                var gap = gapEndObject.time - gapBeginObject.time;
                                 if (gap - MS_EPSILON > snapMs)
                                 {
                                     foundEndOfPattern = true;
-                                    currentPatternEndTimeMs = gapBeginObject.GetEndTime();
+                                    currentPatternEndTimeMs = gapBeginObject.time;
                                 }
                             } else if (i == objects.Count - 1 && foundStartOfPattern)
                             {
                                 // last note, so forced end of pattern
                                 foundEndOfPattern = true;
-                                currentPatternEndTimeMs = objects.SafeGetIndex(i).GetEndTime();
+                                currentPatternEndTimeMs = objects.SafeGetIndex(i).time;
                             }
 
                             // check if this is start of pattern
@@ -156,11 +167,11 @@ namespace MVTaikoChecks.Checks.Compose
                                 var gapEndObject = objects.SafeGetIndex(i + 1);
 
                                 // Check if gap is smaller than or equal to the snap size
-                                var gap = gapEndObject.time - gapBeginObject.GetEndTime();
+                                var gap = gapEndObject.time - gapBeginObject.time;
                                 if (gap - MS_EPSILON <= snapMs)
                                 {
                                     foundStartOfPattern = true;
-                                    currentPatternStartTimeMs = gapBeginObject.GetEndTime();
+                                    currentPatternStartTimeMs = gapBeginObject.time;
                                     patternStartIndex = i;
                                 }
                             }
@@ -195,6 +206,16 @@ namespace MVTaikoChecks.Checks.Compose
                                         outputDict[snapValues.Key] ?? "unknown snap",
                                         durationOfPattern
                                     ).ForDifficulties(diff);
+                                } else if (durationOfPattern == snapValues.Value)
+                                {
+                                    yield return new Issue(
+                                        GetTemplate(_MINOR),
+                                        beatmap,
+                                        Timestamp.Get(currentPatternStartTimeMs).Trim() + ">",
+                                        Timestamp.Get(currentPatternEndTimeMs).Trim() + ">",
+                                        outputDict[snapValues.Key] ?? "unknown snap",
+                                        durationOfPattern
+                                    ).ForDifficulties(diff);
                                 }
                             }
                         }
@@ -202,18 +223,7 @@ namespace MVTaikoChecks.Checks.Compose
                 }
             }
         }
-        // Checks if bottom diff is kantan
-        private Boolean isBottomDiffKantan(BeatmapSet beatmapSet)
-        {
-            foreach (var beatmap in beatmapSet.beatmaps)
-            {
-                if (beatmap.GetDifficulty(true) == DIFF_KANTAN)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        
     }
 }
 

@@ -161,5 +161,17 @@ namespace MVTaikoChecks.Utils
         {
             return TakeLowerAbsValue(current.GetTailOffsetFromPrevBarlineMs(), current.GetTailOffsetFromNextBarlineMs());
         }
+
+        public static bool IsBottomDiffKantan(this BeatmapSet beatmapSet)
+        {
+            foreach (var beatmap in beatmapSet.beatmaps)
+            {
+                if (beatmap.GetDifficulty(true) == Beatmap.Difficulty.Easy)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
