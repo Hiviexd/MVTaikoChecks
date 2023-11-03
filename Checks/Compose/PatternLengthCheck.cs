@@ -64,7 +64,7 @@ namespace MVTaikoChecks.Checks.Compose
                 _MINOR,
 
                 new IssueTemplate(LEVEL_MINOR,
-                    "{0} {1} {2} pattern is {3} notes long, ensure this makes sense",
+                    "{0} {1} {2} pattern is {3} notes long.",
                     "start", "end", "snap", "number")
                 .WithCause("Pattern length is equal to the RC guideline")
             },
@@ -73,9 +73,9 @@ namespace MVTaikoChecks.Checks.Compose
             {
                 _WARNING,
                 new IssueTemplate(LEVEL_WARNING,
-                    "{0} {1} {2} pattern is {3} notes long, ensure this makes sense",
+                    "{0} {1} {2} pattern is {3} notes long, ensure this makes sense.",
                     "start", "end", "snap", "number")
-                .WithCause("Pattern length is surpassing the RC guideline")
+                .WithCause("Pattern length is surpassing the RC guideline.")
             }
         };
 
@@ -190,7 +190,7 @@ namespace MVTaikoChecks.Checks.Compose
                                         GetTemplate(_WARNING),
                                         beatmap,
                                         Timestamp.Get(currentPatternStartTimeMs).Trim() + ">",
-                                        Timestamp.Get(currentPatternEndTimeMs).Trim() + ">",
+                                        Timestamp.Get(currentPatternEndTimeMs).Trim() +,
                                         outputDict[snapValues.Key] ?? "unknown snap",
                                         durationOfPattern
 
@@ -202,7 +202,7 @@ namespace MVTaikoChecks.Checks.Compose
                                         GetTemplate(_WARNING),
                                         beatmap,
                                         Timestamp.Get(currentPatternStartTimeMs).Trim() + ">",
-                                        Timestamp.Get(currentPatternEndTimeMs).Trim() + ">",
+                                        Timestamp.Get(currentPatternEndTimeMs).Trim(),
                                         outputDict[snapValues.Key] ?? "unknown snap",
                                         durationOfPattern
                                     ).ForDifficulties(diff);
@@ -212,7 +212,7 @@ namespace MVTaikoChecks.Checks.Compose
                                         GetTemplate(_MINOR),
                                         beatmap,
                                         Timestamp.Get(currentPatternStartTimeMs).Trim() + ">",
-                                        Timestamp.Get(currentPatternEndTimeMs).Trim() + ">",
+                                        Timestamp.Get(currentPatternEndTimeMs).Trim(),
                                         outputDict[snapValues.Key] ?? "unknown snap",
                                         durationOfPattern
                                     ).ForDifficulties(diff);
@@ -223,7 +223,5 @@ namespace MVTaikoChecks.Checks.Compose
                 }
             }
         }
-        
     }
 }
-
