@@ -190,7 +190,7 @@ namespace MVTaikoChecks.Checks.Compose
                                         GetTemplate(_WARNING),
                                         beatmap,
                                         Timestamp.Get(currentPatternStartTimeMs).Trim() + ">",
-                                        Timestamp.Get(currentPatternEndTimeMs).Trim() +,
+                                        Timestamp.Get(currentPatternEndTimeMs).Trim(),
                                         outputDict[snapValues.Key] ?? "unknown snap",
                                         durationOfPattern
 
