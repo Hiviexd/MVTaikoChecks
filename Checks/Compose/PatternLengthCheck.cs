@@ -147,7 +147,7 @@ namespace MVTaikoChecks.Checks.Compose
                                 var gapEndObject = objects.SafeGetIndex(i + 1);
 
                                 // Check if gap is greater than the snap size
-                                var gap = gapEndObject.time - gapBeginObject.time;
+                                var gap = gapEndObject.time - gapBeginObject.GetEndTime();
                                 if (gap - MS_EPSILON > snapMs)
                                 {
                                     foundEndOfPattern = true;
@@ -167,7 +167,7 @@ namespace MVTaikoChecks.Checks.Compose
                                 var gapEndObject = objects.SafeGetIndex(i + 1);
 
                                 // Check if gap is smaller than or equal to the snap size
-                                var gap = gapEndObject.time - gapBeginObject.time;
+                                var gap = gapEndObject.time - gapBeginObject.GetEndTime();
                                 if (gap - MS_EPSILON <= snapMs)
                                 {
                                     foundStartOfPattern = true;
