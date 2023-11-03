@@ -51,7 +51,9 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 
 ## Known issues
 
-- Difficulties with custom names are always marked as "Easy" so make sure you manually change that to the correct diff, else you'll have an insane amount of flase positives.
+Difficulties with custom names are always marked as "Easy" so make sure you manually change that to the correct diff, else you'll have an insane amount of flase positives.
+
+https://github.com/Hiviexd/MVTaikoChecks/assets/62819481/55cdb56d-0c25-4dda-8ed3-af472361f1dd
 
 ## Feature requests & bug reports
 
