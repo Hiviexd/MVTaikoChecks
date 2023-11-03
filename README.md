@@ -32,6 +32,7 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 - OD/HP settings
 - Kiai flashes
 - Unsnapped last note that accidentally hides its barline
+- Pattern lengths
 
 ### Planned checks
 
@@ -40,7 +41,7 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 ## Installing
 
 1. Download and install Mapset Verifier from [here](https://github.com/Naxesss/MapsetVerifier#download) if you don't have it already
-2. Download the [latest release](https://github.com/Hiviexd/MVTaikoChecks/releases/latest) of `MVTaikoChecks.dll` 
+2. Download the [latest release](https://github.com/Hiviexd/MVTaikoChecks/releases/latest) of `MVTaikoChecks.dll`
 3. Open MV and click the settings icon (top right)
 4. Scroll down to the `Shortcuts` section
 5. Click the `Open externals folder` icon
