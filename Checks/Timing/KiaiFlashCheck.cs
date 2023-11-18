@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using MapsetParser.objects;
@@ -64,7 +63,7 @@ namespace MVTaikoChecks.Checks.Timing
 
         public override IEnumerable<Issue> GetIssues(Beatmap beatmap)
         {
-            var kiaiToggles = beatmap.timingLines.FindKiaiToggles();
+            var kiaiToggles = beatmap.FindKiaiToggles();
 
             foreach (var toggle in kiaiToggles)
             {

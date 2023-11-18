@@ -112,55 +112,42 @@ namespace MVTaikoChecks.Utils
             return Math.Min(gapBeforeMs, gapAfterMs);
         }
 
-        public static double GetHeadOffsetFromPrevBarlineMs(this HitObject current)
+        public static double GetOffsetFromPrevBarlineMs(Beatmap beatmap, double time)
         {
-            var timing = current.beatmap.GetTimingLine<UninheritedLine>(current.time);
+            var timing = beatmap.GetTimingLine<UninheritedLine>(time);
             var barlineGap = timing.msPerBeat * timing.meter;
 
-            return (current.time - timing.offset) % barlineGap;
+            return (time - timing.offset) % barlineGap;
         }
 
-        public static double GetHeadOffsetFromNextBarlineMs(this HitObject current)
+        public static double GetOffsetFromNextBarlineMs(Beatmap beatmap, double time)
         {
-            var timing = current.beatmap.GetTimingLine<UninheritedLine>(current.time);
+            var timing = beatmap.GetTimingLine<UninheritedLine>(time);
             var barlineGap = timing.msPerBeat * timing.meter;
 
-            var offsetFromNextImplicitBarline = ((current.time - timing.offset) % barlineGap) - barlineGap;
-            var nextPotentialRedLine = current.beatmap.GetTimingLine<UninheritedLine>(current.time + offsetFromNextImplicitBarline);
-            var offsetFromNextPotentialRedline = current.time - nextPotentialRedLine.offset;
+            var offsetFromNextImplicitBarline = ((time - timing.offset) % barlineGap) - barlineGap;
+            var nextPotentialRedLine = beatmap.GetTimingLine<UninheritedLine>(time + offsetFromNextImplicitBarline);
+            var offsetFromNextPotentialRedline = time - nextPotentialRedLine.offset;
 
             return TakeLowerAbsValue(offsetFromNextImplicitBarline, offsetFromNextPotentialRedline);
         }
 
-        public static double GetHeadOffsetFromNearestBarlineMs(this HitObject current)
+        public static double GetOffsetFromNearestBarlineMs(Beatmap beatmap, double time)
         {
-            return TakeLowerAbsValue(current.GetHeadOffsetFromPrevBarlineMs(), current.GetHeadOffsetFromNextBarlineMs());
+            return TakeLowerAbsValue(GetOffsetFromPrevBarlineMs(beatmap, time), GetOffsetFromNextBarlineMs(beatmap, time));
         }
 
-        public static double GetTailOffsetFromPrevBarlineMs(this HitObject current)
-        {
-            var timing = current.beatmap.GetTimingLine<UninheritedLine>(current.GetEndTime());
-            var barlineGap = timing.msPerBeat * timing.meter;
+        public static double GetHeadOffsetFromPrevBarlineMs(this HitObject current) => GetOffsetFromPrevBarlineMs(current.beatmap, current.time);
 
-            return (current.GetEndTime() - timing.offset) % barlineGap;
-        }
+        public static double GetHeadOffsetFromNextBarlineMs(this HitObject current) => GetOffsetFromNextBarlineMs(current.beatmap, current.time);
 
-        public static double GetTailOffsetFromNextBarlineMs(this HitObject current)
-        {
-            var timing = current.beatmap.GetTimingLine<UninheritedLine>(current.GetEndTime());
-            var barlineGap = timing.msPerBeat * timing.meter;
+        public static double GetHeadOffsetFromNearestBarlineMs(this HitObject current) => GetOffsetFromNearestBarlineMs(current.beatmap, current.time);
 
-            var offsetFromNextImplicitBarline = ((current.GetEndTime() - timing.offset) % barlineGap) - barlineGap;
-            var nextPotentialRedLine = current.beatmap.GetTimingLine<UninheritedLine>(current.GetEndTime() + offsetFromNextImplicitBarline);
-            var offsetFromNextPotentialRedline = current.GetEndTime() - nextPotentialRedLine.offset;
+        public static double GetTailOffsetFromPrevBarlineMs(this HitObject current) => GetOffsetFromPrevBarlineMs(current.beatmap, current.GetEndTime());
 
-            return TakeLowerAbsValue(offsetFromNextImplicitBarline, offsetFromNextPotentialRedline);
-        }
+        public static double GetTailOffsetFromNextBarlineMs(this HitObject current) => GetOffsetFromNextBarlineMs(current.beatmap, current.GetEndTime());
 
-        public static double GetTailOffsetFromNearestBarlineMs(this HitObject current)
-        {
-            return TakeLowerAbsValue(current.GetTailOffsetFromPrevBarlineMs(), current.GetTailOffsetFromNextBarlineMs());
-        }
+        public static double GetTailOffsetFromNearestBarlineMs(this HitObject current) => GetOffsetFromNearestBarlineMs(current.beatmap, current.GetEndTime());
 
         public static bool IsBottomDiffKantan(this BeatmapSet beatmapSet)
         {
