@@ -17,6 +17,7 @@ namespace MVTaikoChecks.Checks.Compose
     [Check]
     public class BarlineUnaffectedBySvCheck : BeatmapCheck
     {
+        private const double THRESHOLD_MS = 5;
         private const string _WARNING = nameof(_WARNING);
 
         public override CheckMetadata GetMetadata() =>
@@ -61,7 +62,7 @@ namespace MVTaikoChecks.Checks.Compose
             foreach (var svChange in beatmap.FindSvChanges())
             {
                 var unsnapMs = TaikoUtils.GetOffsetFromNearestBarlineMs(beatmap, svChange.offset);
-                if (unsnapMs <= 1d && unsnapMs > 0d)
+                if (unsnapMs <= THRESHOLD_MS && unsnapMs > 0d)
                 {
                     yield return new Issue(
                        GetTemplate(_WARNING),
