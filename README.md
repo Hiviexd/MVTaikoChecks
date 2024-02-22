@@ -2,15 +2,16 @@
 
 A set of osu!taiko specific [Mapset Verifier](https://github.com/Naxesss/MapsetVerifier) checks
 
-> **Warning**
+> [!WARNING]
 > This plugin is still in heavy development, so [false positives and false negatives](https://en.wikipedia.org/wiki/False_positives_and_false_negatives) may occur. If you find something that isn't right, please refer to the *[Feature requests & bug reports](#feature-requests--bug-reports)* section.
+>
 > **ALWAYS APPLY YOUR OWN JUDGEMENT ON EVERY CHECK AND DON'T BLINDLY FOLLOW THEM.**
 
 ## Features
 
 ### BPM scaling
 
-Every check tries to compensate for BPM scaling, however this is not perfect and may cause false positives in very high or low BPM maps. **Always use your manual judgement with every check.**
+Checks try to compensate for BPM scaling when needed, however this is not perfect and may cause false positives in very high or low BPM maps. **Always use your manual judgement with every check.**
 
 | BPM | Action |
 | :-- | :-- |
@@ -19,7 +20,7 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 | 130 < BPM < 270 | effective BPM is unchanged |
 | BPM >= 270 | effective BPM is divided by 2 |
 
-> **Important**
+> [!IMPORTANT]
 > This unfortunately **does not** work on double/half BPM-style maps that don't change the actual BPM value, so it will cause false positives.
 
 ### Available checks
@@ -33,6 +34,8 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 - Kiai flashes
 - Unsnapped last note that accidentally hides its barline
 - Pattern lengths
+- Inconsistent kiai toggles across difficulties
+- Barlines unaffected by SV when they likely should be
 
 ### Planned checks
 
@@ -52,6 +55,9 @@ Every check tries to compensate for BPM scaling, however this is not perfect and
 ## Known issues
 
 Difficulties with custom names are always marked as "Easy" so make sure you manually change that to the correct diff, else you'll have an insane amount of flase positives.
+
+> [!NOTE]
+> This is an issue with Mapset Verifier (specifically the lack of osu!taiko SR calculation), not this plugin.
 
 https://github.com/Hiviexd/MVTaikoChecks/assets/62819481/55cdb56d-0c25-4dda-8ed3-af472361f1dd
 
