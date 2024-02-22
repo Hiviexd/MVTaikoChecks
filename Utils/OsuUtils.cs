@@ -2,7 +2,6 @@
 using MapsetParser.objects.timinglines;
 using System;
 using System.IO;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace MVTaikoChecks.Utils
@@ -59,5 +58,27 @@ namespace MVTaikoChecks.Utils
             }
             return kiaiToggles;
         }
+
+        public static List<TimingLine> FindKiaiToggles(this Beatmap beatmap) => beatmap.timingLines.FindKiaiToggles();
+
+        public static List<TimingLine> FindSvChanges(this List<TimingLine> timingLines)
+        {
+            List<TimingLine> svChanges = new List<TimingLine>();
+            
+            for (int i=0; i<timingLines.Count-1; i++)
+            {
+                TimingLine firstLine = timingLines[i];
+                TimingLine secondLine = timingLines[i+1];
+
+                if (firstLine.svMult != secondLine.svMult && firstLine.offset != secondLine.offset)
+                {
+                    svChanges.Add(secondLine);
+                }
+            }
+
+            return svChanges;
+        }
+
+        public static List<TimingLine> FindSvChanges(this Beatmap beatmap) => beatmap.timingLines.FindSvChanges();
     }
 }
