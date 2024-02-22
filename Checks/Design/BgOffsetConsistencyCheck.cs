@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
+using System.Text;
 
 using MapsetParser.objects;
 
@@ -54,29 +54,59 @@ namespace MVTaikoChecks.Checks.Timing
         public override IEnumerable<Issue> GetIssues(BeatmapSet beatmapSet)
         {
             // Record known offsets for each unique BG file
-            var bgOffsets = new Dictionary<string, HashSet<Vector2?>>();
+            var files = new Dictionary<string, Dictionary<Vector2?, HashSet<string>>>();
             foreach (var beatmap in beatmapSet.beatmaps)
             {
                 foreach (var beatmapBg in beatmap.backgrounds) {
-                    bgOffsets.TryAdd(beatmapBg.path, new HashSet<Vector2?>());
-                    bgOffsets[beatmapBg.path].Add(beatmapBg.offset);
+                    files.TryAdd(beatmapBg.path, new Dictionary<Vector2?, HashSet<string>>());
+                    var file = files[beatmapBg.path];
+                    file.TryAdd(beatmapBg.offset, new HashSet<string>());
+                    var diffNames = file[beatmapBg.offset];
+                    diffNames.Add(beatmap.metadataSettings.version);
                 }
             }
 
-            // Check if any unique BG file has multiple recorded offsets (this means there is an inconsistency)
-            foreach (var bgOffset in bgOffsets)
+            // Print any inconsistencies
+            foreach (var file in files)
             {
-                if (bgOffset.Value.Count > 1)
+                var fileName = file.Key;
+                var offsets = file.Value;
+
+                // If the file only has a single recorded offset, there is no inconsistency
+                if (offsets.Count <= 1)
                 {
-                    yield return new Issue(
-                        GetTemplate(_MINOR),
-                        null,
-                        bgOffset.Key,
-                        bgOffset.Value.Count,
-                        string.Join(", ", bgOffset.Value)
-                    );
+                    continue;
                 }
+
+                var outputString = convertOffsetsToString(offsets);
+
+                yield return new Issue(
+                    GetTemplate(_MINOR),
+                    null,
+                    fileName,
+                    offsets.Count,
+                    outputString
+                );
             }
+        }
+
+        private string convertOffsetsToString(Dictionary<Vector2?, HashSet<string>> offsets)
+        {
+            if (offsets == null)
+            {
+                return null;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var offset in offsets) {
+                sb.Append(offset.Key);
+                sb.Append(" (");
+                sb.Append(string.Join(", ", offset.Value));
+                sb.Append("), ");
+            }
+            sb.Remove(sb.Length - 2, 2);    // Remove last trailing comma + space
+
+            return sb.ToString();
         }
     }
 }
