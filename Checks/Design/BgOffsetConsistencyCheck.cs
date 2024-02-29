@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 
 using MapsetParser.objects;
 
@@ -22,7 +21,7 @@ namespace MVTaikoChecks.Checks.Timing
             {
                 Author = "Nostril",
                 Category = "Design",
-                Message = "Background offset inconsistency",
+                Message = "Background offset inconsistencies",
                 Documentation = new Dictionary<string, string>()
                 {
                     {
@@ -43,10 +42,10 @@ namespace MVTaikoChecks.Checks.Timing
             {
                 _MINOR,
                 new IssueTemplate(LEVEL_MINOR,
-                    "\"{0}\" has {1} unique offsets: {2}",
-                    "filename",
-                    "# found",
-                    "enumerated list")
+                    "\"{0}\" {1}: ({2})",
+                    "Filename",
+                    "Offset Coordinates",
+                    "List of Difficulties")
                 .WithCause("Background offset is inconsistent across difficulties. Make sure this is intentional.")
             }
         };
@@ -78,35 +77,19 @@ namespace MVTaikoChecks.Checks.Timing
                     continue;
                 }
 
-                var outputString = convertOffsetsToString(offsets);
-
-                yield return new Issue(
-                    GetTemplate(_MINOR),
-                    null,
-                    fileName,
-                    offsets.Count,
-                    outputString
-                );
+                foreach (var offset in offsets)
+                {
+                    var offsetCoords = offset.Key;
+                    var diffNames = string.Join(", ", offset.Value);
+                    yield return new Issue(
+                        GetTemplate(_MINOR),
+                        null,
+                        fileName,
+                        offsetCoords,
+                        diffNames
+                    );
+                }
             }
-        }
-
-        private string convertOffsetsToString(Dictionary<Vector2?, HashSet<string>> offsets)
-        {
-            if (offsets == null)
-            {
-                return null;
-            }
-
-            StringBuilder sb = new StringBuilder();
-            foreach (var offset in offsets) {
-                sb.Append(offset.Key);
-                sb.Append(" (");
-                sb.Append(string.Join(", ", offset.Value));
-                sb.Append("), ");
-            }
-            sb.Remove(sb.Length - 2, 2);    // Remove last trailing comma + space
-
-            return sb.ToString();
         }
     }
 }
