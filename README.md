@@ -3,7 +3,7 @@
 A set of osu!taiko specific [Mapset Verifier](https://github.com/Naxesss/MapsetVerifier) checks
 
 > [!WARNING]
-> This plugin is still in heavy development, so [false positives and false negatives](https://en.wikipedia.org/wiki/False_positives_and_false_negatives) may occur. If you find something that isn't right, please refer to the *[Feature requests & bug reports](#feature-requests--bug-reports)* section.
+> This plugin is still in active development, so [false positives and false negatives](https://en.wikipedia.org/wiki/False_positives_and_false_negatives) may occur. If you find something that isn't right, please refer to the *[Feature requests & bug reports](#feature-requests--bug-reports)* section.
 >
 > **ALWAYS APPLY YOUR OWN JUDGEMENT ON EVERY CHECK AND DON'T BLINDLY FOLLOW THEM.**
 
@@ -35,6 +35,7 @@ Checks try to compensate for BPM scaling when needed, however this is not perfec
 - Unsnapped last note that accidentally hides its barline
 - Pattern lengths
 - Inconsistent kiai toggles across difficulties
+- Inconsistent background position across difficulties
 - Barlines unaffected by SV when they likely should be
 
 ### Planned checks
