@@ -47,8 +47,9 @@ namespace MVTaikoChecks.Checks.Timing
             {
                 _MINOR,
                 new IssueTemplate(LEVEL_MINOR,
-                    "{0}",
-                    "List of Difficulty Names")
+                    "Group {0}: ({1})",
+                    "Kiai Group #",
+                    "List of Difficulties")
                 .WithCause("Kiai start and end times are not aligned across difficulties.")
             }
         };
@@ -77,7 +78,8 @@ namespace MVTaikoChecks.Checks.Timing
                     yield return new Issue(
                         GetTemplate(_MINOR),
                         null,
-                        "Group " + (i + 1).ToString() + ": (" + string.Join(", ", diffNameStrings[i]) + ")"
+                        (i + 1).ToString(),
+                        string.Join(", ", diffNameStrings[i])
                     );
                 }
             }
