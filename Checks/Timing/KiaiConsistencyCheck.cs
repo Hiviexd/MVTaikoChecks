@@ -75,13 +75,12 @@ namespace MVTaikoChecks.Checks.Timing
                 for (int i = 0; i < mapsetKiaiSetCount; i++)
                 {
                     yield return new Issue(
-                    GetTemplate(_MINOR),
-                    null,
-                    "Group " + (i + 1).ToString() + ": (" + string.Join(", ", diffNameStrings[i]) + ")"
+                        GetTemplate(_MINOR),
+                        null,
+                        "Group " + (i + 1).ToString() + ": (" + string.Join(", ", diffNameStrings[i]) + ")"
                     );
                 }
             }
         }
-
     }
 }
