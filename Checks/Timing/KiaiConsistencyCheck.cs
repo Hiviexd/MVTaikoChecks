@@ -11,6 +11,7 @@ using MVTaikoChecks.Utils;
 
 using static MVTaikoChecks.Aliases.Mode;
 using static MVTaikoChecks.Aliases.Level;
+using System;
 
 namespace MVTaikoChecks.Checks.Timing
 {
@@ -24,7 +25,7 @@ namespace MVTaikoChecks.Checks.Timing
             {
                 Author = "SN707, Nostril",
                 Category = "Compose",
-                Message = "Kiai consistency",
+                Message = "Kiai inconsistencies",
                 Modes = new Beatmap.Mode[] { MODE_TAIKO },
                 Documentation = new Dictionary<string, string>()
                 {
@@ -46,38 +47,38 @@ namespace MVTaikoChecks.Checks.Timing
             {
                 _MINOR,
                 new IssueTemplate(LEVEL_MINOR,
-                    "Kiai is inconsistent across difficulties.")
+                    "{0}",
+                    "List of Difficulty Names")
                 .WithCause("Kiai start and end times are not aligned across difficulties.")
             }
         };
 
         public override IEnumerable<Issue> GetIssues(BeatmapSet beatmapSet)
         {
-            // Store all kiai times in a 2D List
-            var mapsetKiais = new List<List<double>>();
+            // Store all kiai times in a Dictionary
+            var mapsetKiais = new Dictionary<string, List<string>>();
 
             foreach (var beatmap in beatmapSet.beatmaps)
             {
-                var beatmapKiais = beatmap.timingLines.FindKiaiToggles().Select(x => x.offset).ToList();
-                mapsetKiais.Add(beatmapKiais);
+                var beatmapKiais = string.Join(',', beatmap.timingLines.FindKiaiToggles().Select(x => x.offset));
+                mapsetKiais.TryAdd(beatmapKiais, new List<string>());
+                mapsetKiais[beatmapKiais].Add(beatmap.metadataSettings.version);
             }
 
-            List<double> firstDiffKiaiSet = mapsetKiais[0];
-
-            // Now we compare the first kiai times list to each of the remaining lists in the 2D array
-            for (int i = 1; i < mapsetKiais.Count; i++)
+            int mapsetKiaiSetCount = mapsetKiais.Count;
+            if (mapsetKiaiSetCount > 1)
             {
-                List<double> currentDiffKiaiSet = mapsetKiais[i];
-                var intersectKiaiSet = firstDiffKiaiSet.Intersect(currentDiffKiaiSet).ToList();
-                if (firstDiffKiaiSet.Count != intersectKiaiSet.Count || currentDiffKiaiSet.Count != intersectKiaiSet.Count)
+                // At least 2 different 'sets' of kiais
+                // Emit each of them and exit
+                var groupStrings = new List<string>();
+                List<List<string>> diffNameStrings = mapsetKiais.Values.ToList();
+                for (int i = 0; i < mapsetKiaiSetCount; i++)
                 {
-                    // intersection, current diff, and lowest diff toggles are not equal, so kiai is inconsistent.
-                    // Emit minor issue + finish.
                     yield return new Issue(
                         GetTemplate(_MINOR),
-                        null
+                        null,
+                        "Group " + (i + 1).ToString() + ": (" + string.Join(", ", diffNameStrings[i]) + ")"
                     );
-                    break;
                 }
             }
         }
