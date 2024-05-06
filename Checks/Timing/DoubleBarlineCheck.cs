@@ -119,7 +119,7 @@ namespace MVTaikoChecks.Checks.Timing
                 }
                 else if (rest - threshold <= 0 && rest > 0)
                 {
-                    if (rest >= 0.5 && rest < barlineGap/2)
+                    if (rest >= 0.5)
                     {
                         yield return new Issue(
                             GetTemplate(_PROBLEM),
