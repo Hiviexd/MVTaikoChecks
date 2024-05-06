@@ -19,6 +19,7 @@ namespace MVTaikoChecks.Checks.Compose
     {
         private const double THRESHOLD_MS = 5;
         private const string _WARNING = nameof(_WARNING);
+        private const string _ROUNDING_ERROR_WARNING = "roundingErrorWarning";
 
         public override CheckMetadata GetMetadata() =>
             new BeatmapCheckMetadata()
@@ -54,6 +55,15 @@ namespace MVTaikoChecks.Checks.Compose
                         "timestamp - ",
                         "unsnap"
                     ).WithCause("The spinner/slider end is unsnapped 1ms early.")
+                },
+                {
+                    _ROUNDING_ERROR_WARNING,
+
+                    new IssueTemplate(
+                        LEVEL_WARNING,
+                        "{0} Barline may not have slider velocity properly applied due to rounding error. Doublecheck manually.",
+                        "timestamp - "
+                    ).WithCause("Rounding error.")
                 }
             };
 
@@ -62,7 +72,15 @@ namespace MVTaikoChecks.Checks.Compose
             foreach (var svChange in beatmap.FindSvChanges())
             {
                 var unsnapMs = TaikoUtils.GetOffsetFromNearestBarlineMs(beatmap, svChange.offset);
-                if (unsnapMs <= THRESHOLD_MS && unsnapMs > 0d)
+                if (unsnapMs < 0d && unsnapMs > -Global.ROUNDING_ERROR_MARGIN)
+                {
+                    yield return new Issue(
+                       GetTemplate(_ROUNDING_ERROR_WARNING),
+                       beatmap,
+                       Timestamp.Get(svChange.offset - unsnapMs)
+                   );
+                }
+                else if (unsnapMs <= THRESHOLD_MS && unsnapMs > 0d)
                 {
                     yield return new Issue(
                        GetTemplate(_WARNING),

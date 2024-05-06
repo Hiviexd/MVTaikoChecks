@@ -21,6 +21,7 @@ namespace MVTaikoChecks.Checks.Compose
     {
         private const string _MINOR = nameof(_MINOR);
         private const string _PROBLEM = nameof(_PROBLEM);
+        private const string _ROUNDING_ERROR_WARNING = "roundingErrorWarning";
 
         public override CheckMetadata GetMetadata() =>
             new BeatmapCheckMetadata()
@@ -64,6 +65,15 @@ namespace MVTaikoChecks.Checks.Compose
                         "{0} Last note in the map is hiding its barline, due to being unsnapped 1ms early",
                         "timestamp - "
                     ).WithCause("The note is unsnapped 1ms early.")
+                },
+                {
+                    _ROUNDING_ERROR_WARNING,
+
+                    new IssueTemplate(
+                        LEVEL_WARNING,
+                        "{0} Last note in the map may have its barline hidden, due to rounding error. Doublecheck manually.",
+                        "timestamp - "
+                    ).WithCause("Rounding error.")
                 }
             };
 
@@ -78,7 +88,15 @@ namespace MVTaikoChecks.Checks.Compose
 
             var unsnapFromLastBarline = lastObject.GetTailOffsetFromNextBarlineMs();
 
-            if (unsnapFromLastBarline > -2.0 && unsnapFromLastBarline <= -1.0)
+            if (unsnapFromLastBarline > -1.0 && unsnapFromLastBarline <= -1.0 + Global.ROUNDING_ERROR_MARGIN)
+            {
+                yield return new Issue(
+                    GetTemplate(_ROUNDING_ERROR_WARNING),
+                    beatmap,
+                    Timestamp.Get(lastObject.GetEndTime())
+                );
+            }
+            else if (unsnapFromLastBarline > -2.0 && unsnapFromLastBarline <= -1.0)
             {
                 if (lastObject is Circle)
                 {

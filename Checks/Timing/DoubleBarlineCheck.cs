@@ -21,6 +21,7 @@ namespace MVTaikoChecks.Checks.Timing
     {
         private const string _PROBLEM = nameof(_PROBLEM);
         private const string _WARNING = nameof(_WARNING);
+        private const string _ROUNDING_ERROR_WARNING = "roundingErrorWarning";
 
         public override CheckMetadata GetMetadata() =>
             new BeatmapCheckMetadata()
@@ -66,6 +67,16 @@ namespace MVTaikoChecks.Checks.Timing
                     ).WithCause(
                         "Red line is extremely close to a downbeat from the previous red line"
                     )
+                },
+                {
+                    _ROUNDING_ERROR_WARNING,
+                    new IssueTemplate(
+                        LEVEL_WARNING,
+                        "{0} Potential double barline due to rounding error, doublecheck manually",
+                        "timestamp - "
+                    ).WithCause(
+                        "Rounding error"
+                    )
                 }
             };
 
@@ -98,9 +109,17 @@ namespace MVTaikoChecks.Checks.Timing
 
                 var rest = distance % barlineGap;
 
-                if (rest - threshold <= 0 && rest > 0)
+                if (rest - barlineGap > -Global.ROUNDING_ERROR_MARGIN)
                 {
-                    if (rest >= 0.5)
+                    yield return new Issue(
+                        GetTemplate(_ROUNDING_ERROR_WARNING),
+                        beatmap,
+                        Timestamp.Get(next.offset)
+                    );
+                }
+                else if (rest - threshold <= 0 && rest > 0)
+                {
+                    if (rest >= 0.5 && rest < barlineGap/2)
                     {
                         yield return new Issue(
                             GetTemplate(_PROBLEM),
