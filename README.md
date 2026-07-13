@@ -1,12 +1,15 @@
 # MVTaikoChecks
 
-A set of osu!taiko specific [Mapset Verifier](https://github.com/Naxesss/MapsetVerifier) checks
+A set of osu!taiko-specific [Mapset Verifier](https://github.com/Naxesss/MapsetVerifier) checks.
 
-> [!WARNING]
-> This plugin is still in active development, so [false positives and false negatives](https://en.wikipedia.org/wiki/False_positives_and_false_negatives) may occur. If you find something that isn't right, please refer to the *[Feature requests & bug reports](#feature-requests--bug-reports)* section.
+> [!CAUTION]
+> This plugin is deprecated, as all checks here have been implemented natively in [Mapset Verifier](https://github.com/Naxesss/MapsetVerifier). Do not use this plugin as it can't be even loaded in newer 2.x releases.
 >
-> **ALWAYS APPLY YOUR OWN JUDGEMENT ON EVERY CHECK AND DON'T BLINDLY FOLLOW THEM.**
+> Download the latest MV release from https://mv.mappersguild.com/.
 
+<details>
+<summary>Archive</summary>
+  
 ## Features
 
 ### BPM scaling
@@ -82,3 +85,4 @@ If you're here to contribute, please open an issue to discuss your idea before y
 
 [^note-unstable]: This check is currently unstable and may cause false positives.
 -->
+</details>
